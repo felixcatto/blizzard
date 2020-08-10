@@ -1,0 +1,61 @@
+{
+  "name": "blizzard",
+  "version": "1.0.0",
+  "description": "Simple MVC using fastify + objection ORM",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/felixcatto/blizzard.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/felixcatto/blizzard/issues"
+  },
+  "homepage": "https://github.com/felixcatto/blizzard#readme",
+  "dependencies": {
+    "bootstrap": "^4.5.2",
+    "fastify": "^3.2.0",
+    "fastify-formbody": "^4.0.3",
+    "fastify-method-override": "^1.4.1",
+    "fastify-reverse-routes": "^2.0.0",
+    "fastify-static": "^3.2.0",
+    "pino-pretty": "^4.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.11.0",
+    "@babel/plugin-proposal-pipeline-operator": "^7.10.5",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.10.4",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^26.2.2",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-css-modules-transform": "^1.6.2",
+    "css-loader": "^4.2.1",
+    "del": "^5.1.0",
+    "eslint": "^7.6.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^23.20.0",
+    "eslint-plugin-react": "^7.20.5",
+    "eslint-plugin-react-hooks": "^4.0.8",
+    "file-loader": "^6.0.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "jest": "^26.2.2",
+    "jest-cli": "^26.2.2",
+    "mini-css-extract-plugin": "^0.9.0",
+    "sass": "^1.26.10",
+    "sass-loader": "^9.0.3",
+    "wait-on": "^5.2.0",
+    "webpack": "^4.44.1",
+    "webpack-bundle-analyzer": "^3.8.0",
+    "webpack-nano": "^1.0.0",
+    "webpack-plugin-serve": "^1.0.1"
+  }
+}
