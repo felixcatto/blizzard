@@ -19,12 +19,16 @@
   "homepage": "https://github.com/felixcatto/blizzard#readme",
   "dependencies": {
     "bootstrap": "^4.5.2",
+    "classnames": "^2.2.6",
     "fastify": "^3.2.0",
     "fastify-formbody": "^4.0.3",
     "fastify-method-override": "^1.4.1",
     "fastify-reverse-routes": "^2.0.0",
     "fastify-static": "^3.2.0",
-    "pino-pretty": "^4.1.0"
+    "lodash": "^4.17.19",
+    "pino-pretty": "^4.1.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",
@@ -44,7 +48,6 @@
     "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-react": "^7.20.5",
     "eslint-plugin-react-hooks": "^4.0.8",
-    "file-loader": "^6.0.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "jest": "^26.2.2",

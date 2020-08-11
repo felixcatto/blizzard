@@ -5,6 +5,7 @@ const babel = require('gulp-babel');
 const EventEmitter = require('events');
 const { spawn } = require('child_process');
 const waitOn = require('wait-on');
+const readline = require('readline');
 const webpackConfig = require('./webpack.config.js');
 const babelConfig = require('./babelconfig.js');
 
@@ -16,11 +17,15 @@ const paths = {
     dest: 'dist/public',
   },
   serverJs: {
-    src: ['*/**/*.js', '!node_modules/**', '!dist/**', '!client/**', '!__tests__/**'],
+    src: ['*/**/*.js', '!node_modules/**', '!dist/**', '!client/**', '!views/**', '!__tests__/**'],
     dest: 'dist',
   },
-  clientJs: {
-    src: 'client/**/*.js',
+  serverViews: {
+    src: 'views/**/*',
+    dest: 'dist/views',
+  },
+  client: {
+    src: 'client/**/*.(js|scss)',
     dest: 'dist/client',
   },
   cssModule: {
@@ -35,6 +40,7 @@ const startServer = async done => {
   await waitOn({
     resources: ['http-get://localhost:4000/'],
     delay: 500,
+    interval: 1000,
   });
   done();
 };
@@ -68,8 +74,8 @@ const copyPublicDev = () =>
     .src(paths.public.src, { since: gulp.lastRun(copyPublicDev) })
     .pipe(gulp.symlink(paths.public.dest, { overwrite: false }));
 
-// const bundleClientJs = done => compiler.run(done);
-// const fakeBundleClientJs = done => webpackEmitter.once('webpackDone', () => done());
+const bundleClient = done => compiler.run(done);
+const fakeBundleClient = done => webpackEmitter.once('webpackDone', () => done());
 
 const transpileServerJs = () =>
   gulp
@@ -77,11 +83,11 @@ const transpileServerJs = () =>
     .pipe(babel(babelConfig.server))
     .pipe(gulp.dest(paths.serverJs.dest));
 
-// const transpileClientJsForSSR = () =>
-//   gulp
-//     .src(paths.clientJs.src, { since: gulp.lastRun(transpileClientJsForSSR) })
-//     .pipe(babel(babelConfig.server))
-//     .pipe(gulp.dest(paths.clientJs.dest));
+const transpileServerViews = () =>
+  gulp
+    .src(paths.serverViews.src, { since: gulp.lastRun(transpileServerViews) })
+    .pipe(babel(babelConfig.server))
+    .pipe(gulp.dest(paths.serverViews.dest));
 
 const trackChangesInDist = () => {
   const watcher = gulp.watch(['dist/**/*']);
@@ -91,28 +97,32 @@ const trackChangesInDist = () => {
     .on('unlink', path => console.log(`File ${path} was removed`));
 };
 
+const terminal = readline.createInterface({ input: process.stdin });
+const watchManualRestart = done => {
+  terminal.on('line', input => {
+    if (input === 'rs') series(transpileServerJs, restartServer)();
+  });
+  done();
+};
+
 const watch = done => {
   gulp.watch(paths.public.src, series(copyPublicDev, restartServer, reloadDevServer));
-  gulp.watch(paths.serverJs.src, series(transpileServerJs, restartServer, reloadDevServer));
-  // gulp.watch(
-  //   paths.clientJs.src,
-  //   series(
-  //     parallel(fakeBundleClientJs, series(transpileClientJsForSSR, restartServer)),
-  //     reloadDevServer
-  //   )
-  // );
+  gulp.watch(paths.serverJs.src, series(transpileServerJs, restartServer));
+  gulp.watch(paths.serverViews.src, series(transpileServerViews, restartServer, reloadDevServer));
+  gulp.watch(paths.client.src, series(fakeBundleClient, reloadDevServer));
   trackChangesInDist();
   done();
 };
 
 const dev = series(
   clean,
-  parallel(copyPublicDev, transpileServerJs, startDevServer),
+  watchManualRestart,
+  parallel(copyPublicDev, transpileServerJs, transpileServerViews, startDevServer),
   startServer,
   watch
 );
 
-const prod = series(copyPublic, transpileServerJs, startServer);
+const prod = series(copyPublic, bundleClient, transpileServerJs, startServer);
 
 module.exports = {
   dev,
