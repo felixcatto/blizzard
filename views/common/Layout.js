@@ -1,23 +1,34 @@
 import React from 'react';
+import cn from 'classnames';
 import Context from '../../lib/context';
 
 export default ({ children }) => {
-  const { urlFor } = React.useContext(Context);
-  return (
-    <div className="container app__container">
-      <h1>Blizzard</h1>
+  const { urlFor, curPath } = React.useContext(Context);
+  const linkClass = linkPath =>
+    cn('app__nav-link', {
+      'app__nav-link_active': curPath === linkPath,
+    });
 
-      <div className="mb-20">
-        <a href={urlFor('home')} className="mr-20">
-          Home
-        </a>
-        <a href={urlFor('users')} className="mr-20">
-          Users
-        </a>
-        <a href="#">Articles</a>
+  return (
+    <div className="app">
+      <div className="app__header">
+        <div className="container app__header-fg">
+          <img src="/img/blizzard.svg" className="app__logo mr-30"/>
+          <div>
+            <a href={urlFor('home')} className={linkClass(urlFor('home'))}>
+              Home
+            </a>
+            <a href={urlFor('users')} className={linkClass(urlFor('users'))}>
+              Users
+            </a>
+            <a href={urlFor('articles')} className={linkClass(urlFor('articles'))}>
+              Articles
+            </a>
+          </div>
+        </div>
       </div>
 
-      {children}
+      <div className="container app__body">{children}</div>
     </div>
   );
 };

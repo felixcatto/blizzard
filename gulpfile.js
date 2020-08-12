@@ -100,7 +100,7 @@ const trackChangesInDist = () => {
 const terminal = readline.createInterface({ input: process.stdin });
 const watchManualRestart = done => {
   terminal.on('line', input => {
-    if (input === 'rs') series(transpileServerJs, restartServer)();
+    if (input === 'rs') series(parallel(transpileServerJs, transpileServerViews), restartServer)();
   });
   done();
 };

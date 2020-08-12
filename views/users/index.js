@@ -3,6 +3,6 @@ import Layout from '../common/Layout';
 
 export default () => (
   <Layout>
-    <div>Here the users index page</div>
+    <div>Here the Users index page</div>
   </Layout>
 );

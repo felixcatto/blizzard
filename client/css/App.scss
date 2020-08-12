@@ -12,25 +12,40 @@ body {
 }
 
 .app {
-  &__container {
-    min-height: 100vh;
+  &__header {
+    position: relative;
+    background: steelblue;
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.5);
+  }
+  &__header-fg {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+  }
+  &__logo {
+    width: 30px;
+  }
+  &__body {
+    min-height: calc(100vh - 60px);
+    padding-top: 20px;
     background: #fff;
     box-shadow: inset 12px 0 25px -15px rgba(0, 0, 0, 0.9),
       inset -12px 0 25px -15px rgba(0, 0, 0, 0.9);
   }
-  &__root-link {
-    color: #212529;
-    &:hover {
-      text-decoration: none;
-      color: #212529;
-    }
-  }
   &__nav-link {
+    color: #fff;
+    margin-right: 20px;
+    &:last-child {
+      margin-right: 0;
+    }
+    &:hover {
+      color: #fff;
+    }
     &_active {
-      color: #212529;
+      color: #000;
       &:hover {
+        color: #000;
         text-decoration: none;
-        color: #212529;
         cursor: default;
       }
     }
@@ -40,6 +55,13 @@ body {
     width: 100%;
     border-radius: 10px;
   }
+}
+
+input.form-control,
+input.form-control:focus,
+textarea.form-control,
+textarea.form-control:focus {
+  color: #222;
 }
 
 .form-control {
@@ -55,6 +77,15 @@ body {
 .clickable {
   cursor: pointer;
   user-select: none;
+}
+
+.fake-link {
+  display: inline-block;
+  &__button {
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
 }
 
 // spinner START

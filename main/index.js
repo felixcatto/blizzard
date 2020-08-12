@@ -3,17 +3,15 @@ import fs from 'fs';
 import fastify from 'fastify';
 import fastifyStatic from 'fastify-static';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
-import { renderMiddleware } from '../lib/utils';
+import fastifyFormbody from 'fastify-formbody';
+import fastifyMethodOverride from 'fastify-method-override';
+import { addRender } from '../lib/utils';
 import addRoutes from '../routes';
 
 // const mode = process.env.NODE_ENV || 'development';
 // const isProduction = mode === 'production';
 // const isDevelopment = mode === 'development';
 const pathPublic = path.resolve(__dirname, '../public');
-
-const setUpStaticAssets = app => {
-  app.register(fastifyStatic, { root: pathPublic });
-};
 
 export default () => {
   const app = fastify({
@@ -22,17 +20,18 @@ export default () => {
       level: 'error',
     },
   });
-  app.register(fastifyReverseRoutes.plugin);
-  setUpStaticAssets(app);
-
-  const template = fs.readFileSync(path.resolve(__dirname, pathPublic, 'html/index.html'), 'utf8');
-
   app.decorate('ctx', {
-    template,
+    template: fs.readFileSync(path.resolve(__dirname, pathPublic, 'html/index.html'), 'utf8'),
     viewsDir: path.resolve(__dirname, '../views'),
     helpers: {},
+    urlFor: '',
   });
-  app.addHook('preHandler', renderMiddleware(app));
+
+  app.register(fastifyReverseRoutes.plugin);
+  app.register(fastifyStatic, { root: pathPublic });
+  app.register(fastifyFormbody);
+  app.register(fastifyMethodOverride);
+  app.addHook('preHandler', addRender(app));
 
   addRoutes(app);
   return app;
