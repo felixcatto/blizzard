@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../common/Layout';
-import Context from '../../lib/context';
+import Context from '../common/context';
 import { Link } from '../common/utils';
 
 export default ({ articles }) => {
@@ -10,7 +10,7 @@ export default ({ articles }) => {
       <h3>Articles List</h3>
 
       <a href={urlFor('newArticle')} className="d-inline-block mb-20">
-        <button className="btn btn-primary">Create new articles</button>
+        <button className="btn btn-primary">Create new article</button>
       </a>
 
       <table className="table">
@@ -31,7 +31,7 @@ export default ({ articles }) => {
                 <a href={urlFor('editArticle', { id: article.id })} className="mr-10">
                   <button className="btn btn-sm btn-outline-primary">Edit Article</button>
                 </a>
-                <Link action={urlFor('article', { id: article.id })} type="delete">
+                <Link href={urlFor('article', { id: article.id })} type="delete">
                   <div className="btn btn-sm btn-outline-primary">
                     Remove Article
                   </div>

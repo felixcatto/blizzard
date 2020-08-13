@@ -39,7 +39,7 @@ export default app => {
   app.get('/articles/:id/edit', { name: 'editArticle' }, (request, reply) => {
     const { id } = request.params;
     const article = db.articles.find(el => el.id === id);
-    reply.render('articles/edit', { article, type: 'edit' });
+    reply.render('articles/edit', { article });
   });
 
   app.post('/articles', (request, reply) => {

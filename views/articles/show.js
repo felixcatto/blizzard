@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../common/Layout';
-import Context from '../../lib/context';
+import Context from '../common/context';
 
 export default ({ article }) => {
   const { urlFor } = React.useContext(Context);

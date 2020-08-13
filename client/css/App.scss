@@ -33,8 +33,10 @@ body {
       inset -12px 0 25px -15px rgba(0, 0, 0, 0.9);
   }
   &__nav-link {
-    color: #fff;
+    padding: 0px 5px;
     margin-right: 20px;
+    border-radius: 12px;
+    color: #fff;
     &:last-child {
       margin-right: 0;
     }
@@ -42,9 +44,10 @@ body {
       color: #fff;
     }
     &_active {
-      color: #000;
+      background: #fff;
+      color: steelblue;
       &:hover {
-        color: #000;
+        color: steelblue;
         text-decoration: none;
         cursor: default;
       }

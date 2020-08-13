@@ -1,5 +1,5 @@
 import React from 'react';
-import Context from '../../lib/context';
+import Context from '../common/context';
 
 export default ({ article, method = 'post' }) => {
   const { urlFor } = React.useContext(Context);
