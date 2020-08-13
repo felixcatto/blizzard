@@ -1,5 +1,6 @@
 import { uniqueId } from 'lodash';
-import { emptyObject } from '../lib/utils';
+import * as y from 'yup';
+import { emptyObject, validate } from '../lib/utils';
 
 const db = {
   articles: [
@@ -22,6 +23,12 @@ const db = {
 };
 
 export default app => {
+  const articleSchema = y.object({
+    id: y.string(),
+    title: y.string().required('required'),
+    text: y.string(),
+  });
+
   app.get('/articles', { name: 'articles' }, (request, reply) => {
     reply.render('articles/index', { articles: db.articles });
   });
@@ -42,24 +49,29 @@ export default app => {
     reply.render('articles/edit', { article });
   });
 
-  app.post('/articles', (request, reply) => {
-    const { title, text } = request.body;
+  app.post('/articles', { preHandler: validate(articleSchema) }, (request, reply) => {
+    if (request.errors) {
+      return reply.render('articles/new', {
+        article: { ...request.body, errors: request.errors },
+      });
+    }
     const { urlFor } = app.ctx;
-    db.articles.push({
-      id: uniqueId(),
-      title,
-      text,
-    });
+    db.articles.push({ ...request.data, id: uniqueId() });
     reply.redirect(urlFor('articles'));
   });
 
-  app.put('/articles/:id', (request, reply) => {
-    const { title, text } = request.body;
+  app.put('/articles/:id', { preHandler: validate(articleSchema) }, (request, reply) => {
     const { id } = request.params;
+    if (request.errors) {
+      return reply.render('articles/edit', {
+        article: { ...request.body, errors: request.errors, id },
+      });
+    }
+
     const { urlFor } = app.ctx;
     const article = db.articles.find(el => el.id === id);
-    article.title = title;
-    article.text = text;
+    article.title = request.data.title;
+    article.text = request.data.text;
     reply.redirect(urlFor('articles'));
   });
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import Context from '../common/context';
+import { Error } from '../common/utils';
 
 export default ({ article, method = 'post' }) => {
   const { urlFor } = React.useContext(Context);
@@ -13,6 +14,7 @@ export default ({ article, method = 'post' }) => {
           <div className="mb-15">
             <label>Title</label>
             <input type="text" className="form-control" name="title" defaultValue={article.title} />
+            <Error entity={article} path="title" />
           </div>
           <div>
             <label>Text</label>

@@ -18,11 +18,14 @@ settings:
     version: '16.13.1'
 
 rules:
+  # Formatting done by Prettier
   function-paren-newline: 0
   no-confusing-arrow: 0
   implicit-arrow-linebreak: 0
   object-curly-newline: 0
   operator-linebreak: 0
+  # END
+  consistent-return: 0
   import/prefer-default-export: 0
   no-console: 1
   arrow-parens:

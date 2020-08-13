@@ -24,8 +24,11 @@ export default () => {
     template: fs.readFileSync(path.resolve(__dirname, pathPublic, 'html/index.html'), 'utf8'),
     viewsDir: path.resolve(__dirname, '../views'),
     helpers: {},
-    urlFor: '',
+    urlFor: null,
   });
+  app.decorateReply('render', null);
+  app.decorateRequest('data', null);
+  app.decorateRequest('errors', null);
 
   app.register(fastifyReverseRoutes.plugin);
   app.register(fastifyStatic, { root: pathPublic });

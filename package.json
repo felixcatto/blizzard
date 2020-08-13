@@ -28,7 +28,8 @@
     "lodash": "^4.17.19",
     "pino-pretty": "^4.1.0",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",
