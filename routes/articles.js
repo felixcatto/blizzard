@@ -52,7 +52,7 @@ export default app => {
   app.post('/articles', { preHandler: validate(articleSchema) }, (request, reply) => {
     if (request.errors) {
       return reply.render('articles/new', {
-        article: { ...request.body, errors: request.errors },
+        article: request.entityWithErr,
       });
     }
     const { urlFor } = app.ctx;
@@ -64,7 +64,7 @@ export default app => {
     const { id } = request.params;
     if (request.errors) {
       return reply.render('articles/edit', {
-        article: { ...request.body, errors: request.errors, id },
+        article: request.entityWithErr,
       });
     }
 

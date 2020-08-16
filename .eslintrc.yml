@@ -42,5 +42,9 @@ rules:
   no-return-assign:
     - error
     - except-parens
+  max-len:
+    - error
+    - ignoreComments: true
+      code: 100
   react/prop-types: 0
   react/display-name: 1

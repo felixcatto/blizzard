@@ -17,7 +17,15 @@ const paths = {
     dest: 'dist/public',
   },
   serverJs: {
-    src: ['*/**/*.js', '!node_modules/**', '!dist/**', '!client/**', '!views/**', '!__tests__/**'],
+    src: [
+      '*/**/*.js',
+      'knexfile.js',
+      '!node_modules/**',
+      '!dist/**',
+      '!client/**',
+      '!views/**',
+      '!__tests__/**',
+    ],
     dest: 'dist',
   },
   serverViews: {
@@ -38,9 +46,10 @@ let server;
 const startServer = async done => {
   server = spawn('node', ['dist/bin/server.js'], { stdio: 'inherit' });
   await waitOn({
-    resources: ['http-get://localhost:4000/'],
+    resources: ['http-get://localhost:4000'],
     delay: 500,
     interval: 1000,
+    validateStatus: status => status !== 503,
   });
   done();
 };

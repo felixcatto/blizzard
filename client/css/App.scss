@@ -63,7 +63,9 @@ body {
 input.form-control,
 input.form-control:focus,
 textarea.form-control,
-textarea.form-control:focus {
+textarea.form-control:focus,
+select.form-control,
+select.form-control:focus, {
   color: #222;
 }
 

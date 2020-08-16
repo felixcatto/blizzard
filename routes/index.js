@@ -4,6 +4,6 @@ import articles from './articles';
 
 const controllers = [home, users, articles];
 
-export default app => {
+export default async app => {
   controllers.forEach(fn => fn(app));
 };
