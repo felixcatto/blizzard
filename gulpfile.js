@@ -25,6 +25,8 @@ const paths = {
       '!client/**',
       '!views/**',
       '!__tests__/**',
+      '!seeds/**',
+      '!migrations/**',
     ],
     dest: 'dist',
   },
@@ -40,17 +42,29 @@ const paths = {
     src: 'client/**/*module.scss',
     dest: 'dist/client',
   },
+  madge: {
+    allFilesSrc: ['**', '!node_modules/**'],
+    jsFilesSrc: 'dist/**/*.js',
+    dest: 'dist',
+  },
 };
 
 let server;
+let isWaitonListening = false;
 const startServer = async done => {
   server = spawn('node', ['dist/bin/server.js'], { stdio: 'inherit' });
-  await waitOn({
-    resources: ['http-get://localhost:4000'],
-    delay: 500,
-    interval: 1000,
-    validateStatus: status => status !== 503,
-  });
+
+  if (!isWaitonListening) {
+    isWaitonListening = true;
+    await waitOn({
+      resources: ['http-get://localhost:4000'],
+      delay: 500,
+      interval: 1000,
+      validateStatus: status => status !== 503,
+    });
+    isWaitonListening = false;
+  }
+
   done();
 };
 
@@ -76,6 +90,13 @@ const reloadDevServer = done => {
 };
 
 const clean = () => del(['dist']);
+
+const copyAll = () => gulp.src(paths.madge.allFilesSrc).pipe(gulp.dest(paths.madge.dest));
+const transpileMadgeJs = () =>
+  gulp
+    .src(paths.madge.jsFilesSrc)
+    .pipe(babel(babelConfig.client))
+    .pipe(gulp.dest(paths.madge.dest));
 
 const copyPublic = () => gulp.src(paths.public.src).pipe(gulp.dest(paths.public.dest));
 const copyPublicDev = () =>
@@ -106,8 +127,8 @@ const trackChangesInDist = () => {
     .on('unlink', path => console.log(`File ${path} was removed`));
 };
 
-const terminal = readline.createInterface({ input: process.stdin });
 const watchManualRestart = done => {
+  const terminal = readline.createInterface({ input: process.stdin });
   terminal.on('line', input => {
     if (input === 'rs') series(parallel(transpileServerJs, transpileServerViews), restartServer)();
   });
@@ -131,9 +152,10 @@ const dev = series(
   watch
 );
 
-const prod = series(copyPublic, bundleClient, transpileServerJs, startServer);
+const build = series(clean, copyPublic, bundleClient, transpileServerJs, transpileServerViews);
 
 module.exports = {
   dev,
-  prod,
+  build,
+  buildForMadge: series(clean, copyAll, transpileMadgeJs),
 };

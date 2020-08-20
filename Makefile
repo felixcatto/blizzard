@@ -5,7 +5,7 @@ start:
 	npx gulp dev
 
 build:
-	NODE_ENV=production npx gulp prod
+	NODE_ENV=production npx gulp build
 
 start-production: build
 	NODE_ENV=test node dist/bin/server.js
@@ -17,7 +17,8 @@ webpack-bundle-analyze:
 	NODE_ENV=production ANALYZE=true npx wp
 
 madge:
-	madge --exclude '^dist/*' --image g.svg .
+	npx gulp buildForMadge
+	madge --image g.svg dist
 
 madge-depends-on-file:
 	madge --exclude '^dist/*' --depends $(arg) .
