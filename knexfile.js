@@ -21,10 +21,14 @@ module.exports = {
   },
 
   test: {
-    client: 'sqlite3',
-    connection: 'database.test.sqlite',
+    client: 'pg',
+    connection: {
+      host: '127.0.0.1',
+      user: 'felixcatto',
+      password: '1',
+      database: 'postgres',
+    },
     useNullAsDefault: true,
-    pool: { afterCreate },
   },
 
   sandbox: {
@@ -35,11 +39,13 @@ module.exports = {
   },
 
   production: {
-    client: 'sqlite3',
+    client: 'pg',
     connection: {
-      filename: './database.sqlite',
+      host: '127.0.0.1',
+      user: 'felixcatto',
+      password: '1',
+      database: 'postgres',
     },
     useNullAsDefault: true,
-    pool: { afterCreate },
   },
 };

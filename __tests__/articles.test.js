@@ -11,11 +11,12 @@ describe('articles', () => {
     await server.ready();
     User = server.objection.User;
     Article = server.objection.Article;
+    await User.query().delete();
     await User.query().insertGraph(usersFixture);
   });
 
   beforeEach(async () => {
-    await Article.query().truncate();
+    await Article.query().delete();
     await Article.query().insertGraph(articlesFixture);
   });
 
@@ -24,7 +25,6 @@ describe('articles', () => {
       method: 'GET',
       url: '/articles',
     });
-    expect(Article).toBeDefined();
     expect(res.statusCode).toBe(200);
   });
 
@@ -67,7 +67,7 @@ describe('articles', () => {
     };
     const res = await server.inject({
       method: 'put',
-      url: '/articles/1',
+      url: `/articles/${article.id}`,
       payload: article,
     });
 
@@ -77,17 +77,17 @@ describe('articles', () => {
   });
 
   it('DELETE /articles/:id', async () => {
+    const [article] = articlesFixture;
     const res = await server.inject({
       method: 'delete',
-      url: '/articles/1',
+      url: `/articles/${article.id}`,
     });
-    const articleFromDb = await Article.query().findById(1);
+    const articleFromDb = await Article.query().findById(article.id);
     expect(res.statusCode).toBe(302);
     expect(articleFromDb).toBeFalsy();
   });
 
   afterAll(async () => {
-    await User.query().truncate();
     await server.close();
   });
 });

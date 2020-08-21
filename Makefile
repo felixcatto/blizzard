@@ -32,11 +32,11 @@ lint-fix:
 lint-with-warn:
 	npx eslint .
 
-test-once:
-	npx jest
-
 test:
-	npx jest --watch
+	npx jest --runInBand --watch
+
+test-once:
+	npx jest --runInBand
 
 migrate:
 	npx knex migrate:latest

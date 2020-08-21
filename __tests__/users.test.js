@@ -13,7 +13,7 @@ describe('users', () => {
   });
 
   beforeEach(async () => {
-    await User.query().truncate();
+    await User.query().delete();
     await User.query().insertGraph(usersFixture);
   });
 
