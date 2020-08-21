@@ -1,3 +1,4 @@
+import path from 'path';
 import { Model } from 'objection';
 import * as y from 'yup';
 import { userRoles } from '../lib/utils';
@@ -6,6 +7,19 @@ import encrypt from '../lib/secure';
 export default class User extends Model {
   static get tableName() {
     return 'users';
+  }
+
+  static get relationMappings() {
+    return {
+      articles: {
+        relation: Model.HasManyRelation,
+        modelClass: path.resolve(__dirname, 'Article.js'),
+        join: {
+          from: 'users.id',
+          to: 'articles.author_id',
+        },
+      },
+    };
   }
 
   static get guestUser() {

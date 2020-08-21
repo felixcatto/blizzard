@@ -3,7 +3,7 @@ export default [
     id: 1,
     name: 'vasa',
     role: 'admin',
-    email: 'none@yandex.ru',
+    email: 'vasa@yandex.ru',
     password: '1',
   },
   {
@@ -11,6 +11,13 @@ export default [
     name: 'tom',
     role: 'user',
     email: 'tom@thunderstorm.com',
+    password: '1',
+  },
+  {
+    id: 3,
+    name: 'fedya',
+    role: 'guest',
+    email: 'fedya@yandex.ru',
     password: '1',
   },
 ];

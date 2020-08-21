@@ -17,12 +17,14 @@ export default ({ articles }) => {
         <tr>
           <th>Title</th>
           <th>Text</th>
+          <th>Author</th>
           <th></th>
         </tr>
         {articles.map(article => (
           <tr key={article.id}>
             <td>{article.title}</td>
             <td>{article.text}</td>
+            <td>{article.user?.name}</td>
             <td>
               <div className="d-flex justify-content-end">
                 <a href={urlFor('article', { id: article.id })} className="mr-10">

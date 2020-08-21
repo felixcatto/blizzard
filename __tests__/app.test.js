@@ -23,7 +23,7 @@ describe('requests', () => {
     expect(res.statusCode).toBe(404);
   });
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   });
 });

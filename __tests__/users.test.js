@@ -101,6 +101,6 @@ describe('users', () => {
   });
 
   afterAll(async () => {
-    server.close();
+    await server.close();
   });
 });
