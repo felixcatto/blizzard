@@ -21,7 +21,7 @@ export default app => {
   app.post('/users', { preHandler: validate(User.yupSchema) }, async (request, reply) => {
     if (request.errors) {
       return reply.render('users/new', {
-        user: request.entityWithErr,
+        user: request.entityWithErrors,
         userRoles,
       });
     }
@@ -45,7 +45,7 @@ export default app => {
       const { id } = request.params;
       if (request.errors) {
         return reply.render('users/edit', {
-          user: request.entityWithErr,
+          user: request.entityWithErrors,
           userRoles,
         });
       }

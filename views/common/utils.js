@@ -1,8 +1,9 @@
 import React from 'react';
+import { userRoles } from '../../lib/utils';
 
-export const Link = ({ href, type, children }) => (
+export const Link = ({ href, method, children }) => (
   <form method="POST" action={href} className="fake-link">
-    <input type="hidden" name="_method" value={type} />
+    <input type="hidden" name="_method" value={method} />
     <button type="submit" className="fake-link__button">
       {children}
     </button>
@@ -10,7 +11,12 @@ export const Link = ({ href, type, children }) => (
 );
 
 export const Error = ({ entity, path }) => {
-  const hasError = entity.errors?.find?.(e => e.path === path);
-  const errorMsg = hasError?.message;
-  return hasError ? <div className="error">{errorMsg}</div> : null;
+  const errorMsg = entity.errors?.[path];
+  return errorMsg ? <div className="error">{errorMsg}</div> : null;
+};
+
+export const userRolesToIcons = {
+  [userRoles.admin]: 'fa fa-star',
+  [userRoles.user]: 'fa fa-fire',
+  [userRoles.guest]: 'fa fa-ghost',
 };

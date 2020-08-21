@@ -5,6 +5,7 @@ import fastifyStatic from 'fastify-static';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
 import fastifyFormbody from 'fastify-formbody';
 import fastifyMethodOverride from 'fastify-method-override';
+import fastifySecureSession from 'fastify-secure-session';
 import { reactRenderPlugin, objectionPlugin, urlForPlugin } from '../lib/utils';
 import routes from '../routes';
 import models from '../models';
@@ -29,8 +30,14 @@ export default () => {
   app.decorateReply('render', null);
   app.decorateRequest('data', null);
   app.decorateRequest('errors', null);
-  app.decorateRequest('entityWithErr', null);
+  app.decorateRequest('entityWithErrors', null);
+  app.decorateRequest('currentUser', null);
+  app.decorateRequest('isSignIn', false);
 
+  app.register(fastifySecureSession, {
+    secret: 'a secret with minimum length of 32 characters',
+    cookie: { path: '/' },
+  });
   app.register(fastifyReverseRoutes.plugin);
   app.register(urlForPlugin);
   app.register(fastifyStatic, { root: pathPublic });

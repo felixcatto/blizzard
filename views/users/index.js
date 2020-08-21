@@ -1,10 +1,13 @@
 import React from 'react';
+import cn from 'classnames';
 import Layout from '../common/Layout';
 import Context from '../common/context';
-import { Link } from '../common/utils';
+import { Link, userRolesToIcons } from '../common/utils';
 
 export default ({ users }) => {
   const { urlFor } = React.useContext(Context);
+  const userIconClass = role => cn('mr-5', userRolesToIcons[role]);
+
   return (
     <Layout>
       <h3>Users List</h3>
@@ -23,14 +26,19 @@ export default ({ users }) => {
         {users.map(user => (
           <tr key={user.id}>
             <td>{user.name}</td>
-            <td>{user.role}</td>
+            <td>
+              <div className="d-flex align-items-center">
+                <i className={userIconClass(user.role)}></i>
+                <div>{user.role}</div>
+              </div>
+            </td>
             <td>{user.email}</td>
             <td>
               <div className="d-flex justify-content-end">
                 <a href={urlFor('editUser', { id: user.id })} className="mr-10">
                   <button className="btn btn-sm btn-outline-primary">Edit user</button>
                 </a>
-                <Link href={urlFor('user', { id: user.id })} type="delete">
+                <Link href={urlFor('user', { id: user.id })} method="delete">
                   <div className="btn btn-sm btn-outline-primary">Remove user</div>
                 </Link>
               </div>

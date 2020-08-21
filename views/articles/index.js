@@ -31,7 +31,7 @@ export default ({ articles }) => {
                 <a href={urlFor('editArticle', { id: article.id })} className="mr-10">
                   <button className="btn btn-sm btn-outline-primary">Edit Article</button>
                 </a>
-                <Link href={urlFor('article', { id: article.id })} type="delete">
+                <Link href={urlFor('article', { id: article.id })} method="delete">
                   <div className="btn btn-sm btn-outline-primary">
                     Remove Article
                   </div>

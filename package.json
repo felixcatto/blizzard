@@ -25,6 +25,7 @@
     "fastify-method-override": "^1.4.1",
     "fastify-plugin": "^2.3.0",
     "fastify-reverse-routes": "^2.0.0",
+    "fastify-secure-session": "^2.2.1",
     "fastify-static": "^3.2.0",
     "knex": "^0.21.4",
     "lodash": "^4.17.19",
