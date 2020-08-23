@@ -1,10 +1,11 @@
 import path from 'path';
 import { Model } from 'objection';
 import * as y from 'yup';
+import { requiredIfExists } from '../lib/utils';
 
-export default class Article extends Model {
+export default class Comment extends Model {
   static get tableName() {
-    return 'articles';
+    return 'comments';
   }
 
   static get relationMappings() {
@@ -13,17 +14,17 @@ export default class Article extends Model {
         relation: Model.BelongsToOneRelation,
         modelClass: path.resolve(__dirname, 'User.js'),
         join: {
-          from: 'articles.author_id',
+          from: 'comments.author_id',
           to: 'users.id',
         },
       },
 
-      comments: {
-        relation: Model.HasManyRelation,
-        modelClass: path.resolve(__dirname, 'Comment.js'),
+      article: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: path.resolve(__dirname, 'Article.js'),
         join: {
-          from: 'articles.id',
-          to: 'comments.article_id',
+          from: 'comments.article_id',
+          to: 'articles.id',
         },
       },
     };
@@ -39,12 +40,8 @@ export default class Article extends Model {
 
   static get yupSchema() {
     return y.object({
-      id: y.string(),
-      title: y.string().required('required'),
-      text: y.string(),
-      created_at: y.string(),
-      updated_at: y.string(),
-      author_id: y.string(),
+      guest_name: y.string().test(...requiredIfExists()),
+      text: y.string().required('required'),
     });
   }
 }

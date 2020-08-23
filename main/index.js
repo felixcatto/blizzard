@@ -3,8 +3,6 @@ import fs from 'fs';
 import fastify from 'fastify';
 import fastifyStatic from 'fastify-static';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
-import fastifyFormbody from 'fastify-formbody';
-import fastifyMethodOverride from 'fastify-method-override';
 import fastifySecureSession from 'fastify-secure-session';
 import { reactRenderPlugin, objectionPlugin, urlForPlugin } from '../lib/utils';
 import routes from '../routes';
@@ -41,8 +39,6 @@ export default () => {
   app.register(fastifyReverseRoutes.plugin);
   app.register(urlForPlugin);
   app.register(fastifyStatic, { root: pathPublic });
-  app.register(fastifyFormbody);
-  app.register(fastifyMethodOverride);
   app.register(objectionPlugin, { mode, models });
   app.register(reactRenderPlugin);
   app.register(routes);

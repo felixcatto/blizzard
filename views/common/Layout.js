@@ -35,7 +35,7 @@ export default ({ children }) => {
               <i className={userIconClass(currentUser.role)}></i>
               <div className="app__user-name mr-10">{currentUser.name}</div>
               <Link href={urlFor('session')} method="delete">
-                <i className="fa fa-sign-in-alt app__sign-icon" title="Sign out"></i>
+                <i className="fa fa-sign-out-alt app__sign-icon" title="Sign out"></i>
               </Link>
             </div>
           ) : (

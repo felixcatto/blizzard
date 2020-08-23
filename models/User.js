@@ -19,6 +19,15 @@ export default class User extends Model {
           to: 'articles.author_id',
         },
       },
+
+      comments: {
+        relation: Model.HasManyRelation,
+        modelClass: path.resolve(__dirname, 'Comment.js'),
+        join: {
+          from: 'users.id',
+          to: 'comments.author_id',
+        },
+      },
     };
   }
 

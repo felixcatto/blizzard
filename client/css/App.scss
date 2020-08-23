@@ -3,12 +3,37 @@
 @import './solid.min.css';
 @import './scssHelpers.scss';
 
+html {
+  font-size: 18px;
+}
+
+@font-face {
+  font-family: SSPR;
+  src: url('/font/SourceSansPro-Regular.ttf');
+}
+
+@font-face {
+  font-family: SSPL;
+  src: url('/font/SourceSansPro-Light.ttf');
+}
+
+@font-face {
+  font-family: SSPEL;
+  src: url('/font/SourceSansPro-ExtraLight.ttf');
+}
+
 body {
-  font-family: 'Comic Sans MS', 'ubuntu';
+  font-family: SSPR, 'ubuntu', 'Comic Sans MS';
   background-image: url('/img/s1.jpg');
   background-position: center;
   background-size: cover;
   background-attachment: fixed;
+}
+
+h1,
+h2,
+h3 {
+  font-family: SSPL;
 }
 
 input.form-control,
@@ -20,6 +45,10 @@ select.form-control:focus {
   color: #222;
 }
 
+.btn {
+  padding-top: 4px;
+}
+
 .form-control {
   &__inline {
     width: auto;
@@ -28,6 +57,17 @@ select.form-control:focus {
 
 .fa {
   color: steelblue;
+  &_big {
+    padding: 2px 5px;
+  }
+  &_link {
+    cursor: pointer;
+    user-select: none;
+    &:hover {
+      text-decoration: none;
+      color: #0056b3;
+    }
+  }
 }
 
 .clickable {
@@ -46,6 +86,15 @@ select.form-control:focus {
 
 .error {
   color: #c9302c;
+}
+
+.text-light {
+  font-size: 0.75rem;
+  color: #6e7582 !important;
+}
+
+.steelblue {
+  color: steelblue;
 }
 
 // spinner START
@@ -150,7 +199,8 @@ $duration: 1.8s;
     color: #fff;
   }
   &__nav-link {
-    padding: 0px 5px;
+    padding: 0px 6px;
+    padding-bottom: 2px;
     margin-right: 20px;
     border-radius: 12px;
     color: #fff;
@@ -173,6 +223,7 @@ $duration: 1.8s;
   &__body {
     min-height: calc(100vh - 60px);
     padding-top: 20px;
+    padding-bottom: 20px;
     background: #fff;
     box-shadow: inset 12px 0 25px -15px rgba(0, 0, 0, 0.9),
       inset -12px 0 25px -15px rgba(0, 0, 0, 0.9);

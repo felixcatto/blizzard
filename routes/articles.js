@@ -1,11 +1,12 @@
+import comments from './comments';
 import { emptyObject, validate } from '../lib/utils';
 
-export default app => {
+export default async app => {
   const { urlFor } = app.ctx;
   const { Article } = app.objection;
 
   app.get('/articles', { name: 'articles' }, async (request, reply) => {
-    const articles = await Article.query().withGraphFetched('user');
+    const articles = await Article.query().withGraphFetched('author');
     reply.render('articles/index', { articles });
   });
 
@@ -14,8 +15,10 @@ export default app => {
   });
 
   app.get('/articles/:id', { name: 'article' }, async (request, reply) => {
-    const article = await Article.query().findById(request.params.id);
-    reply.render('articles/show', { article });
+    const article = await Article.query()
+      .findById(request.params.id)
+      .withGraphFetched('[author, comments.author]');
+    reply.render('articles/show', { article, newComment: emptyObject });
   });
 
   app.get('/articles/:id/edit', { name: 'editArticle' }, async (request, reply) => {
@@ -33,7 +36,7 @@ export default app => {
     const { currentUser, isSignIn } = request;
     const article = await Article.query().insert(request.data);
     if (isSignIn) {
-      await article.$relatedQuery('user').relate(currentUser.id);
+      await article.$relatedQuery('author').relate(currentUser.id);
     }
     reply.redirect(urlFor('articles'));
   });
@@ -53,4 +56,6 @@ export default app => {
     await Article.query().deleteById(request.params.id);
     reply.redirect(urlFor('articles'));
   });
+
+  app.register(comments, { prefix: '/articles/:id' });
 };

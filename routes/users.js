@@ -1,6 +1,6 @@
 import { emptyObject, validate, userRoles, checkValueUnique } from '../lib/utils';
 
-export default app => {
+export default async app => {
   const { User } = app.objection;
   const { urlFor } = app.ctx;
 

@@ -1,7 +1,7 @@
 import { emptyObject, validate } from '../lib/utils';
 import encrypt from '../lib/secure';
 
-export default app => {
+export default async app => {
   const { User } = app.objection;
   const { urlFor } = app.ctx;
 

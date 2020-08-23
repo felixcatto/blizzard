@@ -38,6 +38,9 @@ test:
 test-once:
 	npx jest --runInBand
 
+test-one-file:
+	npx jest --watch $(arg)
+
 migrate:
 	npx knex migrate:latest
 
