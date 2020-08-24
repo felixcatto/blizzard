@@ -52,7 +52,7 @@ export default async app => {
         });
       }
 
-      await Comment.query().update(request.data).where('id', request.params.commentId);
+      await Comment.query().update(request.data).where('id', commentId);
       reply.redirect(urlFor('article', { id: articleId }));
     }
   );

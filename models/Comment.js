@@ -3,7 +3,7 @@ import { Model } from 'objection';
 import * as y from 'yup';
 import { requiredIfExists } from '../lib/utils';
 
-export default class Comment extends Model {
+export class Comment extends Model {
   static get tableName() {
     return 'comments';
   }

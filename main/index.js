@@ -6,7 +6,7 @@ import fastifyReverseRoutes from 'fastify-reverse-routes';
 import fastifySecureSession from 'fastify-secure-session';
 import { reactRenderPlugin, objectionPlugin, urlForPlugin } from '../lib/utils';
 import routes from '../routes';
-import models from '../models';
+import * as models from '../models';
 
 const mode = process.env.NODE_ENV || 'development';
 const pathPublic = path.resolve(__dirname, '../public');

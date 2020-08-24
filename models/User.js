@@ -4,7 +4,7 @@ import * as y from 'yup';
 import { userRoles } from '../lib/utils';
 import encrypt from '../lib/secure';
 
-export default class User extends Model {
+export class User extends Model {
   static get tableName() {
     return 'users';
   }
@@ -43,7 +43,6 @@ export default class User extends Model {
 
   static get yupSchema() {
     return y.object({
-      id: y.string(),
       name: y.string().required('required'),
       role: y.mixed().oneOf(Object.values(userRoles)).required('required'),
       email: y.string().email().required('required'),
