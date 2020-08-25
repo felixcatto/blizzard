@@ -15,6 +15,7 @@ export default ({ urlFor, articles }) => (
         <th>Title</th>
         <th>Text</th>
         <th>Author</th>
+        <th>Tags</th>
         <th></th>
       </tr>
       {articles.map(article => (
@@ -22,6 +23,7 @@ export default ({ urlFor, articles }) => (
           <td>{article.title}</td>
           <td className="text-justify">{article.text}</td>
           <td>{article.author?.name}</td>
+          <td>{article.tags.map(tag => tag.name).join(', ')}</td>
           <td>
             <div className="d-flex justify-content-end">
               <a href={urlFor('article', { id: article.id })} className="mr-10">

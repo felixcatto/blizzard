@@ -1,6 +1,7 @@
 import path from 'path';
 import { Model } from 'objection';
 import * as y from 'yup';
+import { isString, compact } from 'lodash';
 
 export class Article extends Model {
   static get tableName() {
@@ -26,7 +27,24 @@ export class Article extends Model {
           to: 'comments.article_id',
         },
       },
+
+      tags: {
+        relation: Model.ManyToManyRelation,
+        modelClass: path.resolve(__dirname, 'Tag.js'),
+        join: {
+          from: 'articles.id',
+          through: {
+            from: 'articles_tags.article_id',
+            to: 'articles_tags.tag_id',
+          },
+          to: 'tags.id',
+        },
+      },
     };
+  }
+
+  get tagIds() {
+    return this.tags ? this.tags.map(tag => tag.id) : [];
   }
 
   $beforeInsert() {
@@ -41,6 +59,13 @@ export class Article extends Model {
     return y.object({
       title: y.string().required('required'),
       text: y.string(),
+      tagIds: y
+        .array()
+        .transform(
+          (value, originalValue) =>
+            (isString(originalValue) ? [originalValue] : originalValue) |> compact
+        )
+        .default([]),
     });
   }
 }

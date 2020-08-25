@@ -2,9 +2,9 @@ import React from 'react';
 import Layout from '../common/Layout';
 import Form from './form';
 
-export default ({ article }) => (
+export default ({ article, tags }) => (
   <Layout>
     <h3>Edit Article</h3>
-    <Form article={article} method="put" />
+    <Form article={article} tags={tags} method="put" />
   </Layout>
 );

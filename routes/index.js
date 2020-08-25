@@ -5,8 +5,9 @@ import home from './home';
 import session from './session';
 import users from './users';
 import articles from './articles';
+import tags from './tags';
 
-const controllers = [home, users, articles, session];
+const controllers = [session, home, users, articles, tags];
 
 export default async app => {
   app.register(fastifyFormbody);

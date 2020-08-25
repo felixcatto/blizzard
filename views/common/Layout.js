@@ -28,6 +28,9 @@ export default ({ children }) => {
               <a href={urlFor('articles')} className={linkClass(urlFor('articles'))}>
                 Articles
               </a>
+              <a href={urlFor('tags')} className={linkClass(urlFor('tags'))}>
+                Tags
+              </a>
             </div>
           </div>
           {isSignIn ? (

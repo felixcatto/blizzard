@@ -1,5 +1,6 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
+import { isEmpty } from 'lodash';
 import Layout from '../common/Layout';
 import { Link, userRolesToIcons } from '../common/utils';
 import { userRoles } from '../../lib/utils';
@@ -17,6 +18,16 @@ export default ({ urlFor, article, newComment }) => (
       )}
     </div>
     <p className="text-justify mb-30">{article.text}</p>
+    {!isEmpty(article.tags) && (
+      <div className="app__article-tags">
+        <div className="text-light mr-10">Tags:</div>
+        {article.tags.map(tag => (
+          <div key={tag.id} className="app__article-tag">
+            {tag.name}
+          </div>
+        ))}
+      </div>
+    )}
 
     {article.comments && (
       <div className="mb-30">
