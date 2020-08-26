@@ -3,9 +3,9 @@ import Context from '../common/context';
 import { Error } from '../common/utils';
 
 export default ({ comment, action, backUrl, method = 'post' }) => {
-  const { isSignIn } = React.useContext(Context);
+  const { isSignedIn } = React.useContext(Context);
   const isNewComment = method === 'post';
-  const canShowGuestName = isNewComment ? !isSignIn : !comment.author_id;
+  const canShowGuestName = isNewComment ? !isSignedIn : !comment.author_id;
 
   return (
     <form action={action} method="post">

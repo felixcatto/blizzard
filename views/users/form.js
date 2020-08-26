@@ -2,7 +2,7 @@ import React from 'react';
 import Context from '../common/context';
 import { Error } from '../common/utils';
 
-export default ({ user, userRoles, method = 'post' }) => {
+export default ({ user, roles, method = 'post' }) => {
   const { urlFor } = React.useContext(Context);
   const action = method === 'put' ? urlFor('user', { id: user.id }) : urlFor('users');
 
@@ -19,7 +19,7 @@ export default ({ user, userRoles, method = 'post' }) => {
           <div className="mb-15">
             <label>Role</label>
             <select name="role" className="form-control" defaultValue={user.role}>
-              {Object.values(userRoles).map(role => (
+              {Object.values(roles).map(role => (
                 <option key={role} value={role}>{role}</option>
               ))}
             </select>

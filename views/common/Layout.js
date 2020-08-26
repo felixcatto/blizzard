@@ -4,7 +4,7 @@ import Context from './context';
 import { Link, userRolesToIcons } from './utils';
 
 export default ({ children }) => {
-  const { urlFor, curPath, currentUser, isSignIn } = React.useContext(Context);
+  const { urlFor, curPath, currentUser, isSignedIn } = React.useContext(Context);
   const linkClass = linkPath =>
     cn('app__nav-link', {
       'app__nav-link_active':
@@ -33,7 +33,7 @@ export default ({ children }) => {
               </a>
             </div>
           </div>
-          {isSignIn ? (
+          {isSignedIn ? (
             <div className="d-flex align-items-center">
               <i className={userIconClass(currentUser.role)}></i>
               <div className="app__user-name mr-10">{currentUser.name}</div>

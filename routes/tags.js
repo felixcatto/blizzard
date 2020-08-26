@@ -1,4 +1,4 @@
-import { emptyObject, validate } from '../lib/utils';
+import { emptyObject, validate, checkSignedIn } from '../lib/utils';
 
 export default async app => {
   const { urlFor } = app.ctx;
@@ -9,29 +9,37 @@ export default async app => {
     reply.render('tags/index', { tags });
   });
 
-  app.get('/tags/new', { name: 'newTag' }, async (request, reply) => {
+  app.get('/tags/new', { name: 'newTag', preHandler: checkSignedIn }, async (request, reply) => {
     reply.render('tags/new', { tag: emptyObject });
   });
 
-  app.get('/tags/:id/edit', { name: 'editTag' }, async (request, reply) => {
-    const tag = await Tag.query().findById(request.params.id);
-    reply.render('tags/edit', { tag });
-  });
-
-  app.post('/tags', { preHandler: validate(Tag.yupSchema) }, async (request, reply) => {
-    if (request.errors) {
-      return reply.render('tags/new', {
-        tag: request.entityWithErrors,
-      });
+  app.get(
+    '/tags/:id/edit',
+    { name: 'editTag', preHandler: checkSignedIn },
+    async (request, reply) => {
+      const tag = await Tag.query().findById(request.params.id);
+      reply.render('tags/edit', { tag });
     }
+  );
 
-    await Tag.query().insert(request.data);
-    reply.redirect(urlFor('tags'));
-  });
+  app.post(
+    '/tags',
+    { preHandler: [checkSignedIn, validate(Tag.yupSchema)] },
+    async (request, reply) => {
+      if (request.errors) {
+        return reply.render('tags/new', {
+          tag: request.entityWithErrors,
+        });
+      }
+
+      await Tag.query().insert(request.data);
+      reply.redirect(urlFor('tags'));
+    }
+  );
 
   app.put(
     '/tags/:id',
-    { name: 'tag', preHandler: validate(Tag.yupSchema) },
+    { name: 'tag', preHandler: [checkSignedIn, validate(Tag.yupSchema)] },
     async (request, reply) => {
       if (request.errors) {
         return reply.render('tags/edit', {
@@ -44,7 +52,7 @@ export default async app => {
     }
   );
 
-  app.delete('/tags/:id', async (request, reply) => {
+  app.delete('/tags/:id', { preHandler: checkSignedIn }, async (request, reply) => {
     await Tag.query().deleteById(request.params.id);
     reply.redirect(urlFor('tags'));
   });

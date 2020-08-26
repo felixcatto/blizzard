@@ -1,7 +1,7 @@
 import path from 'path';
 import { Model } from 'objection';
 import * as y from 'yup';
-import { userRoles } from '../lib/utils';
+import { roles } from '../lib/utils';
 import encrypt from '../lib/secure';
 
 export class User extends Model {
@@ -35,7 +35,7 @@ export class User extends Model {
     return {
       id: '-1',
       name: 'Guest',
-      role: userRoles.guest,
+      role: roles.guest,
       email: '',
       password_digest: '',
     };
@@ -44,7 +44,7 @@ export class User extends Model {
   static get yupSchema() {
     return y.object({
       name: y.string().required('required'),
-      role: y.mixed().oneOf(Object.values(userRoles)).required('required'),
+      role: y.mixed().oneOf(Object.values(roles)).required('required'),
       email: y.string().email().required('required'),
       password: y.string().required('required'),
     });

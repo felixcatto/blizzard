@@ -1,5 +1,5 @@
 import React from 'react';
-import { userRoles } from '../../lib/utils';
+import { roles } from '../../lib/utils';
 
 export const Link = ({ href, method, children }) => (
   <form method="POST" action={href} className="fake-link">
@@ -16,7 +16,7 @@ export const Error = ({ entity, path }) => {
 };
 
 export const userRolesToIcons = {
-  [userRoles.admin]: 'fa fa-star',
-  [userRoles.user]: 'fa fa-fire',
-  [userRoles.guest]: 'fa fa-ghost',
+  [roles.admin]: 'fa fa-star',
+  [roles.user]: 'fa fa-fire',
+  [roles.guest]: 'fa fa-ghost',
 };

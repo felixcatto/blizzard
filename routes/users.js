@@ -1,4 +1,4 @@
-import { emptyObject, validate, userRoles, checkValueUnique } from '../lib/utils';
+import { emptyObject, validate, roles, checkValueUnique, checkAdmin } from '../lib/utils';
 
 export default async app => {
   const { User } = app.objection;
@@ -9,44 +9,52 @@ export default async app => {
     reply.render('users/index', { users });
   });
 
-  app.get('/users/new', { name: 'newUser' }, async (request, reply) => {
-    reply.render('users/new', { user: emptyObject, userRoles });
+  app.get('/users/new', { name: 'newUser', preHandler: checkAdmin }, async (request, reply) => {
+    reply.render('users/new', { user: emptyObject, roles });
   });
 
-  app.get('/users/:id/edit', { name: 'editUser' }, async (request, reply) => {
-    const user = await User.query().findById(request.params.id);
-    reply.render('users/edit', { user, userRoles });
-  });
-
-  app.post('/users', { preHandler: validate(User.yupSchema) }, async (request, reply) => {
-    if (request.errors) {
-      return reply.render('users/new', {
-        user: request.entityWithErrors,
-        userRoles,
-      });
+  app.get(
+    '/users/:id/edit',
+    { name: 'editUser', preHandler: checkAdmin },
+    async (request, reply) => {
+      const user = await User.query().findById(request.params.id);
+      reply.render('users/edit', { user, roles });
     }
+  );
 
-    const { isUnique, errors } = await checkValueUnique(User, 'email', request.data.email);
-    if (!isUnique) {
-      return reply.render('users/new', {
-        user: { ...request.data, ...errors },
-        userRoles,
-      });
+  app.post(
+    '/users',
+    { preHandler: [checkAdmin, validate(User.yupSchema)] },
+    async (request, reply) => {
+      if (request.errors) {
+        return reply.render('users/new', {
+          user: request.entityWithErrors,
+          roles,
+        });
+      }
+
+      const { isUnique, errors } = await checkValueUnique(User, 'email', request.data.email);
+      if (!isUnique) {
+        return reply.render('users/new', {
+          user: { ...request.data, ...errors },
+          roles,
+        });
+      }
+
+      await User.query().insert(request.data);
+      reply.redirect(urlFor('users'));
     }
-
-    await User.query().insert(request.data);
-    reply.redirect(urlFor('users'));
-  });
+  );
 
   app.put(
     '/users/:id',
-    { name: 'user', preHandler: validate(User.yupSchema) },
+    { name: 'user', preHandler: [checkAdmin, validate(User.yupSchema)] },
     async (request, reply) => {
       const { id } = request.params;
       if (request.errors) {
         return reply.render('users/edit', {
           user: request.entityWithErrors,
-          userRoles,
+          roles,
         });
       }
 
@@ -54,7 +62,7 @@ export default async app => {
       if (!isUnique) {
         return reply.render('users/edit', {
           user: { ...request.data, ...errors },
-          userRoles,
+          roles,
         });
       }
 
@@ -63,7 +71,7 @@ export default async app => {
     }
   );
 
-  app.delete('/users/:id', async (request, reply) => {
+  app.delete('/users/:id', { preHandler: checkAdmin }, async (request, reply) => {
     await User.query().delete().where('id', request.params.id);
     reply.redirect(urlFor('users'));
   });

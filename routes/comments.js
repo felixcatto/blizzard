@@ -1,13 +1,22 @@
-import { validate } from '../lib/utils';
+import { validate, isSignedIn, checkBelongsToUser } from '../lib/utils';
 
 export default async app => {
   const { urlFor } = app.ctx;
   const { Article, Comment } = app.objection;
 
-  app.get('/comments/:commentId/edit', { name: 'editComment' }, async (request, reply) => {
+  const isCommentBelongsToUser = checkBelongsToUser(async request => {
     const comment = await Comment.query().findById(request.params.commentId);
-    reply.render('comments/edit', { comment });
+    return comment.author_id;
   });
+
+  app.get(
+    '/comments/:commentId/edit',
+    { name: 'editComment', preHandler: isCommentBelongsToUser },
+    async (request, reply) => {
+      const comment = await Comment.query().findById(request.params.commentId);
+      reply.render('comments/edit', { comment });
+    }
+  );
 
   app.post(
     '/comments',
@@ -25,10 +34,10 @@ export default async app => {
         });
       }
 
-      const { currentUser, isSignIn } = request;
+      const { currentUser } = request;
       const comment = await Comment.query().insert(request.data);
       await comment.$relatedQuery('article').relate(articleId);
-      if (isSignIn) {
+      if (isSignedIn(currentUser)) {
         await comment.$relatedQuery('author').relate(currentUser.id);
       }
       reply.redirect(urlFor('article', { id: articleId }));
@@ -37,7 +46,7 @@ export default async app => {
 
   app.put(
     '/comments/:commentId',
-    { name: 'comment', preHandler: validate(Comment.yupSchema) },
+    { name: 'comment', preHandler: [isCommentBelongsToUser, validate(Comment.yupSchema)] },
     async (request, reply) => {
       const articleId = request.params.id;
       const { commentId } = request.params;
@@ -57,9 +66,13 @@ export default async app => {
     }
   );
 
-  app.delete('/comments/:commentId', async (request, reply) => {
-    const articleId = request.params.id;
-    await Comment.query().deleteById(request.params.commentId);
-    reply.redirect(urlFor('article', { id: articleId }));
-  });
+  app.delete(
+    '/comments/:commentId',
+    { preHandler: isCommentBelongsToUser },
+    async (request, reply) => {
+      const articleId = request.params.id;
+      await Comment.query().deleteById(request.params.commentId);
+      reply.redirect(urlFor('article', { id: articleId }));
+    }
+  );
 };

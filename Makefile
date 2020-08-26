@@ -35,9 +35,6 @@ lint-with-warn:
 test:
 	npx jest --runInBand --watch
 
-test-once:
-	npx jest --runInBand
-
 test-one-file:
 	npx jest --watch $(arg)
 

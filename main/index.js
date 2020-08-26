@@ -30,7 +30,6 @@ export default () => {
   app.decorateRequest('errors', null);
   app.decorateRequest('entityWithErrors', null);
   app.decorateRequest('currentUser', null);
-  app.decorateRequest('isSignIn', false);
 
   app.register(fastifySecureSession, {
     secret: 'a secret with minimum length of 32 characters',
