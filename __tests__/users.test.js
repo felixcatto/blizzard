@@ -2,14 +2,17 @@ import { omit } from 'lodash';
 import getApp from '../main';
 import usersFixture from './fixtures/users';
 import encrypt from '../lib/secure';
+import { getLoginCookie } from './fixtures/utils';
 
 describe('users', () => {
   const server = getApp();
   let User;
+  let loginCookie;
 
   beforeAll(async () => {
     await server.ready();
     User = server.objection.User;
+    loginCookie = await getLoginCookie(server);
   });
 
   beforeEach(async () => {
@@ -29,6 +32,7 @@ describe('users', () => {
     const res = await server.inject({
       method: 'GET',
       url: '/users/new',
+      cookies: loginCookie,
     });
     expect(res.statusCode).toBe(200);
   });
@@ -37,6 +41,7 @@ describe('users', () => {
     const res = await server.inject({
       method: 'GET',
       url: '/users/1/edit',
+      cookies: loginCookie,
     });
     expect(res.statusCode).toBe(200);
   });
@@ -53,6 +58,7 @@ describe('users', () => {
       method: 'post',
       url: '/users',
       payload: user,
+      cookies: loginCookie,
     });
 
     const userFromDb = await User.query().findOne('name', user.name);
@@ -68,6 +74,7 @@ describe('users', () => {
       method: 'post',
       url: '/users',
       payload: user,
+      cookies: loginCookie,
     });
 
     expect(res.statusCode).toBe(200); // 302 for OK redirect, 200 for new page with errors :D
@@ -82,6 +89,7 @@ describe('users', () => {
       method: 'put',
       url: '/users/1',
       payload: user,
+      cookies: loginCookie,
     });
 
     const userFromDb = await User.query().findOne('name', user.name);
@@ -94,6 +102,7 @@ describe('users', () => {
     const res = await server.inject({
       method: 'delete',
       url: '/users/1',
+      cookies: loginCookie,
     });
     const userFromDb = await User.query().findById(1);
     expect(res.statusCode).toBe(302);

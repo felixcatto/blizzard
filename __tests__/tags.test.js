@@ -1,13 +1,16 @@
 import getApp from '../main';
 import tagsFixture from './fixtures/tags';
+import { getLoginCookie } from './fixtures/utils';
 
 describe('tags', () => {
   const server = getApp();
   let Tag;
+  let loginCookie;
 
   beforeAll(async () => {
     await server.ready();
     Tag = server.objection.Tag;
+    loginCookie = await getLoginCookie(server);
   });
 
   beforeEach(async () => {
@@ -27,6 +30,7 @@ describe('tags', () => {
     const res = await server.inject({
       method: 'GET',
       url: '/tags/new',
+      cookies: loginCookie,
     });
     expect(res.statusCode).toBe(200);
   });
@@ -35,6 +39,7 @@ describe('tags', () => {
     const res = await server.inject({
       method: 'GET',
       url: '/tags/1/edit',
+      cookies: loginCookie,
     });
     expect(res.statusCode).toBe(200);
   });
@@ -45,6 +50,7 @@ describe('tags', () => {
       method: 'post',
       url: '/tags',
       payload: tag,
+      cookies: loginCookie,
     });
 
     const tagFromDb = await Tag.query().findOne('name', tag.name);
@@ -61,6 +67,7 @@ describe('tags', () => {
       method: 'put',
       url: `/tags/${tag.id}`,
       payload: tag,
+      cookies: loginCookie,
     });
 
     const tagFromDb = await Tag.query().findById(tag.id);
@@ -73,6 +80,7 @@ describe('tags', () => {
     const res = await server.inject({
       method: 'delete',
       url: `/tags/${tag.id}`,
+      cookies: loginCookie,
     });
     const tagFromDb = await Tag.query().findById(tag.id);
     expect(res.statusCode).toBe(302);

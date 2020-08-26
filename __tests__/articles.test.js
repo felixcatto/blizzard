@@ -3,6 +3,7 @@ import usersFixture from './fixtures/users';
 import articlesFixture from './fixtures/articles';
 import tagsFixture from './fixtures/tags';
 import articleTagsFixture from './fixtures/articles_tags';
+import { getLoginCookie } from './fixtures/utils';
 
 describe('articles', () => {
   const server = getApp();
@@ -10,6 +11,7 @@ describe('articles', () => {
   let Article;
   let Tag;
   let knex;
+  let loginCookie;
 
   beforeAll(async () => {
     await server.ready();
@@ -17,10 +19,12 @@ describe('articles', () => {
     Article = server.objection.Article;
     Tag = server.objection.Tag;
     knex = server.objection.knex;
+
     await User.query().delete();
     await Tag.query().delete();
     await User.query().insertGraph(usersFixture);
     await Tag.query().insertGraph(tagsFixture);
+    loginCookie = await getLoginCookie(server);
   });
 
   beforeEach(async () => {
@@ -42,6 +46,7 @@ describe('articles', () => {
     const res = await server.inject({
       method: 'GET',
       url: '/articles/new',
+      cookies: loginCookie,
     });
     expect(res.statusCode).toBe(200);
   });
@@ -50,6 +55,7 @@ describe('articles', () => {
     const res = await server.inject({
       method: 'GET',
       url: '/articles/1/edit',
+      cookies: loginCookie,
     });
     expect(res.statusCode).toBe(200);
   });
@@ -63,6 +69,7 @@ describe('articles', () => {
       method: 'post',
       url: '/articles',
       payload: article,
+      cookies: loginCookie,
     });
 
     const articleFromDb = await Article.query().findOne('title', article.title);
@@ -81,6 +88,7 @@ describe('articles', () => {
       method: 'post',
       url: '/articles',
       payload: article,
+      cookies: loginCookie,
     });
 
     const articleFromDb = await Article.query()
@@ -99,6 +107,7 @@ describe('articles', () => {
       method: 'put',
       url: `/articles/${article.id}`,
       payload: article,
+      cookies: loginCookie,
     });
 
     const articleFromDb = await Article.query().findById(article.id);
@@ -115,6 +124,7 @@ describe('articles', () => {
       method: 'put',
       url: `/articles/${article.id}`,
       payload: article,
+      cookies: loginCookie,
     });
 
     const articleFromDb = await Article.query().findById(article.id).withGraphFetched('tags');
@@ -127,6 +137,7 @@ describe('articles', () => {
     const res = await server.inject({
       method: 'delete',
       url: `/articles/${article.id}`,
+      cookies: loginCookie,
     });
     const articleFromDb = await Article.query().findById(article.id);
     expect(res.statusCode).toBe(302);
