@@ -4,11 +4,13 @@ install:
 start:
 	npx gulp dev
 
+start-production:
+	NODE_ENV=test node dist/bin/server.js
+
 build:
 	NODE_ENV=production npx gulp build
-
-start-production: build
-	NODE_ENV=test node dist/bin/server.js
+	NODE_ENV=production make migrate
+	NODE_ENV=production make al-seed
 
 webpack-bundle:
 	NODE_ENV=production npx wp

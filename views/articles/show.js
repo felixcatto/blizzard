@@ -5,6 +5,7 @@ import Layout from '../common/Layout';
 import { Link, userRolesToIcons } from '../common/utils';
 import { roles } from '../../lib/utils';
 import CommentForm from '../comments/form';
+import s from './styles.module.scss';
 
 export default ({ urlFor, isBelongsToUser, article, newComment }) => (
   <Layout>
@@ -19,10 +20,10 @@ export default ({ urlFor, isBelongsToUser, article, newComment }) => (
     </div>
     <p className="text-justify mb-30">{article.text}</p>
     {!isEmpty(article.tags) && (
-      <div className="app__article-tags">
+      <div className={s.articleTags}>
         <div className="text-light mr-10">Tags:</div>
         {article.tags.map(tag => (
-          <div key={tag.id} className="app__article-tag">
+          <div key={tag.id} className={s.articleTag}>
             {tag.name}
           </div>
         ))}

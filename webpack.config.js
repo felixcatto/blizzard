@@ -4,6 +4,8 @@ const { WebpackPluginServe: Serve } = require('webpack-plugin-serve');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const babelConfig = require('./babelconfig.js');
 
+const { generateScopedName } = babelConfig;
+
 const devServer = new Serve({
   hmr: false,
   client: { silent: true },
@@ -18,7 +20,10 @@ const devServer = new Serve({
 
 const common = {
   entry: {
-    index: path.resolve(__dirname, 'client/index.js'),
+    index: [
+      path.resolve(__dirname, 'client/index.js'),
+      path.resolve(__dirname, 'views/common/serverStyles.js'),
+    ],
   },
   output: {
     filename: 'js/[name].js',
@@ -43,7 +48,8 @@ const common = {
             options: {
               url: false,
               modules: {
-                localIdentName: '[local]--[hash:base64:5]',
+                getLocalIdent: ({ resourcePath }, _, localName) =>
+                  generateScopedName(localName, resourcePath),
               },
             },
           },
@@ -90,7 +96,7 @@ if (process.env.ANALYZE) {
 } else {
   const plugins = [devServer].concat(common.plugins);
   const entry = {
-    index: [common.entry.index, 'webpack-plugin-serve/client'],
+    index: common.entry.index.concat('webpack-plugin-serve/client'),
   };
 
   module.exports = {

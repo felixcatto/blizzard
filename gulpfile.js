@@ -31,15 +31,15 @@ const paths = {
     dest: 'dist',
   },
   serverViews: {
-    src: 'views/**/*',
+    src: 'views/**/*.js',
+    dest: 'dist/views',
+  },
+  serverStyles: {
+    src: 'views/**/*.module.scss',
     dest: 'dist/views',
   },
   client: {
     src: 'client/**/*.(js|scss)',
-    dest: 'dist/client',
-  },
-  cssModule: {
-    src: 'client/**/*module.scss',
     dest: 'dist/client',
   },
   madge: {
@@ -139,6 +139,12 @@ const watch = done => {
   gulp.watch(paths.public.src, series(copyPublicDev, restartServer, reloadDevServer));
   gulp.watch(paths.serverJs.src, series(transpileServerJs, restartServer));
   gulp.watch(paths.serverViews.src, series(transpileServerViews, restartServer, reloadDevServer));
+  // gulp.watch(
+  //   paths.serverStyles.src,
+  //   series(parallel(fakeBundleClient, series(transpileServerViews, restartServer)), reloadDevServer)
+  // );
+  // need to transpile all views, because nothing changed sinceLastRun
+
   gulp.watch(paths.client.src, series(fakeBundleClient, reloadDevServer));
   trackChangesInDist();
   done();
