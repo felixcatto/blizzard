@@ -28,6 +28,7 @@
     "fastify-reverse-routes": "^2.0.0",
     "fastify-secure-session": "^2.2.1",
     "fastify-static": "^3.2.0",
+    "klaw-sync": "^6.0.0",
     "knex": "^0.21.4",
     "lodash": "^4.17.19",
     "objection": "^2.2.2",
@@ -35,6 +36,7 @@
     "pino-pretty": "^4.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-select": "^3.1.0",
     "sqlite3": "^5.0.0",
     "yup": "^0.29.3"
   },

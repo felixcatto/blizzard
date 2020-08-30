@@ -5,6 +5,7 @@ import fastifyStatic from 'fastify-static';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
 import fastifySecureSession from 'fastify-secure-session';
 import { reactRenderPlugin, objectionPlugin, urlForPlugin } from '../lib/utils';
+import { getWebpackEntries } from '../lib/devUtils';
 import routes from '../routes';
 import * as models from '../models';
 
@@ -19,9 +20,11 @@ export default () => {
     },
   });
 
+  const viewsDir = path.resolve(__dirname, '../views');
   app.decorate('ctx', {
     template: fs.readFileSync(path.resolve(__dirname, pathPublic, 'html/index.html'), 'utf8'),
-    viewsDir: path.resolve(__dirname, '../views'),
+    viewsDir,
+    webpackEntries: getWebpackEntries(viewsDir),
     urlFor: null,
   });
   app.decorate('objection', null);

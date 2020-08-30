@@ -35,6 +35,7 @@ export default ({ article, tags, method = 'post' }) => {
               ))}
             </select>
           </div>
+          <div id="tagsSelect"></div>
         </div>
       </div>
 

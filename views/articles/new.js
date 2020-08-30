@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../common/Layout';
-import Form from './form';
+import Form from './Form';
 
 export default ({ article, tags }) => (
   <Layout>

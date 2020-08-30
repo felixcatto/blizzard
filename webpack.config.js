@@ -3,8 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { WebpackPluginServe: Serve } = require('webpack-plugin-serve');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const babelConfig = require('./babelconfig.js');
-
-const { generateScopedName } = babelConfig;
+const { getWebpackEntries, generateScopedName } = require('./lib/devUtils');
 
 const devServer = new Serve({
   hmr: false,
@@ -18,15 +17,25 @@ const devServer = new Serve({
   },
 });
 
+const viewsPath = path.resolve(__dirname, 'views');
+const clientPages = getWebpackEntries(viewsPath).reduce(
+  (acc, entry) => ({
+    ...acc,
+    [entry]: path.resolve(viewsPath, entry),
+  }),
+  {}
+);
+
 const common = {
   entry: {
-    index: [
+    'index.js': [
       path.resolve(__dirname, 'client/index.js'),
       path.resolve(__dirname, 'views/common/serverStyles.js'),
     ],
+    ...clientPages,
   },
   output: {
-    filename: 'js/[name].js',
+    filename: 'js/[name]',
     path: path.resolve(__dirname, 'dist/public'),
   },
   module: {
@@ -69,11 +78,7 @@ const common = {
       },
     ],
   },
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: 'css/[name].css',
-    }),
-  ],
+  plugins: [new MiniCssExtractPlugin({ filename: 'css/index.css' })],
   stats: {
     warnings: false,
     children: false,
@@ -95,15 +100,12 @@ if (process.env.ANALYZE) {
   };
 } else {
   const plugins = [devServer].concat(common.plugins);
-  const entry = {
-    index: common.entry.index.concat('webpack-plugin-serve/client'),
-  };
+  common.entry['index.js'] = common.entry['index.js'].concat('webpack-plugin-serve/client');
 
   module.exports = {
     ...common,
     mode: 'development',
     devtool: 'cheap-module-eval-source-map',
-    entry,
     plugins,
   };
 }

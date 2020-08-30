@@ -1,11 +1,4 @@
-const sass = require('sass'); // eslint-disable-line
-const crypto = require('crypto');
-
-const generateScopedName = (localName, resourcePath) => {
-  const getHash = value => crypto.createHash('sha256').update(value).digest('hex');
-  const hash = getHash(`${resourcePath}${localName}`).slice(0, 5);
-  return `${localName}--${hash}`;
-};
+const { generateScopedName, preprocessCss } = require('./lib/devUtils');
 
 module.exports = {
   client: {
@@ -51,16 +44,11 @@ module.exports = {
         'css-modules-transform',
         {
           generateScopedName,
-          preprocessCss: (data, filename) => {
-            if (!filename.endsWith('module.scss')) return '';
-            return sass.renderSync({ file: filename }).css.toString('utf8');
-          },
+          preprocessCss,
           extensions: ['.scss'],
           devMode: true,
         },
       ],
     ],
   },
-
-  generateScopedName,
 };
