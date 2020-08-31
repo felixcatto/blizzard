@@ -22,7 +22,7 @@ const paths = {
       'knexfile.js',
       '!node_modules/**',
       '!dist/**',
-      '!client/**',
+      // '!client/**',
       '!views/**',
       '!__tests__/**',
       '!seeds/**',
