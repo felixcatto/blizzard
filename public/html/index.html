@@ -4,12 +4,15 @@
     <meta charset="UTF-8" />
     <title>Blizzard</title>
     <link rel="stylesheet" href="/css/index.css" />
-    <link rel='preload' href='/font/fa-solid-900.woff' as='font' type='font/woff' crossorigin='anonymous'>
-    <link rel="preload" href="/img/s1.jpg" as="image">
+    <link rel="preload" href="/font/fa-solid-900.woff" as="font" type="font/woff" crossorigin="" />
+    <link rel="preload" href="/font/SourceSansProR.ttf" as="font" type="font/ttf" crossorigin="" />
+    <link rel="preload" href="/font/SourceSansProL.ttf" as="font" type="font/ttf" crossorigin="" />
+    <link rel="preload" href="/img/s1.jpg" as="image" />
   </head>
   <body>
-    {{content}}
+    <div id="page">{{content}}</div>
     <script src="/js/index.js"></script>
+    {{initialState}}
     {{clientPageScript}}
   </body>
 </html>

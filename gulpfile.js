@@ -1,4 +1,5 @@
 const gulp = require('gulp');
+const path = require('path');
 const del = require('del');
 const webpack = require('webpack');
 const babel = require('gulp-babel');
@@ -6,9 +7,13 @@ const EventEmitter = require('events');
 const { spawn } = require('child_process');
 const waitOn = require('wait-on');
 const readline = require('readline');
-const webpackConfig = require('./webpack.config.js');
+const { makeServer, listen } = require('blunt-livereload');
+const stream = require('stream');
+const { promisify } = require('util');
+const { generateClientPages, clearCache } = require('./lib/devUtils');
 const babelConfig = require('./babelconfig.js');
 
+const finished = promisify(stream.finished);
 const { series, parallel } = gulp;
 
 const paths = {
@@ -22,7 +27,6 @@ const paths = {
       'knexfile.js',
       '!node_modules/**',
       '!dist/**',
-      '!client/**',
       '!views/**',
       '!__tests__/**',
       '!seeds/**',
@@ -30,17 +34,11 @@ const paths = {
     ],
     dest: 'dist',
   },
-  serverViews: {
-    src: 'views/**/*.js',
-    dest: 'dist/views',
-  },
-  serverStyles: {
-    src: 'views/**/*.module.scss',
-    dest: 'dist/views',
-  },
   client: {
-    src: 'client/**/*.(js|scss)',
-    dest: 'dist/client',
+    pages: 'views/**/[A-Z]*.js',
+    components: 'views/**/[a-z]*.js',
+    cssModules: 'views/**/*.module.scss',
+    dest: 'dist/views',
   },
   madge: {
     allFilesSrc: ['**', '!node_modules/**'],
@@ -51,7 +49,7 @@ const paths = {
 
 let server;
 let isWaitonListening = false;
-const startServer = async done => {
+const startServer = async () => {
   server = spawn('node', ['dist/bin/server.js'], { stdio: 'inherit' });
 
   if (!isWaitonListening) {
@@ -64,32 +62,32 @@ const startServer = async done => {
     });
     isWaitonListening = false;
   }
-
-  done();
 };
 
-const restartServer = done => {
+const restartServer = async () => {
   server.kill();
-  startServer(done);
+  await startServer();
 };
-process.on('exit', () => {
-  console.log('*** EXIT ***');
-  server && server.kill(); // eslint-disable-line
-});
+
+process.on('exit', () => server && server.kill());
 
 const webpackEmitter = new EventEmitter();
-const compiler = webpack(webpackConfig);
-compiler.hooks.done.tap('done', () => webpackEmitter.emit('webpackDone'));
-
-const startDevServer = done => compiler.watch({}, done);
-
-const reloadDevServer = done => {
-  const [devServer] = webpackConfig.plugins;
-  devServer.emit('reload');
-  done();
+let webpackConfig;
+let webpackWatching;
+const startWebpack = done => {
+  clearCache(require.resolve('./webpack.config.js'));
+  webpackConfig = require('./webpack.config.js'); // eslint-disable-line
+  const compiler = webpack(webpackConfig);
+  compiler.hooks.done.tap('done', () => webpackEmitter.emit('webpackDone'));
+  webpackWatching = compiler.watch({}, done);
 };
+const restartWebpack = (done = () => {}) => webpackWatching.close(() => startWebpack(done));
 
-const clean = () => del(['dist']);
+const devServer = makeServer();
+const startDevServer = async () => listen(devServer);
+const reloadBrowser = async () => devServer.reloadBrowser();
+
+const clean = async () => del(['dist']);
 
 const copyAll = () => gulp.src(paths.madge.allFilesSrc).pipe(gulp.dest(paths.madge.dest));
 const transpileMadgeJs = () =>
@@ -104,61 +102,86 @@ const copyPublicDev = () =>
     .src(paths.public.src, { since: gulp.lastRun(copyPublicDev) })
     .pipe(gulp.symlink(paths.public.dest, { overwrite: false }));
 
-const bundleClient = done => compiler.run(done);
-const fakeBundleClient = done => webpackEmitter.once('webpackDone', () => done());
+// eslint-disable-next-line
+const bundleClient = done => webpack(require('./webpack.config.js')).run(done);
+const waitBundleClient = async () =>
+  new Promise(resolve => webpackEmitter.once('webpackDone', resolve));
 
 const transpileServerJs = () =>
   gulp
     .src(paths.serverJs.src, { since: gulp.lastRun(transpileServerJs) })
     .pipe(babel(babelConfig.server))
     .pipe(gulp.dest(paths.serverJs.dest));
-
-const transpileServerViews = () =>
+const transpileCC = () =>
   gulp
-    .src(paths.serverViews.src, { since: gulp.lastRun(transpileServerViews) })
+    .src(paths.client.components, {
+      since: gulp.lastRun(transpileCC),
+    })
     .pipe(babel(babelConfig.server))
-    .pipe(gulp.dest(paths.serverViews.dest));
+    .pipe(gulp.dest(paths.client.dest));
+const transpileCP = () =>
+  gulp
+    .src(paths.client.pages, {
+      since: gulp.lastRun(transpileCP),
+    })
+    .pipe(babel(babelConfig.server))
+    .pipe(gulp.dest(paths.client.dest));
+const transpileFolder = (src, dest) =>
+  gulp.src(src).pipe(babel(babelConfig.server)).pipe(gulp.dest(dest));
 
 const trackChangesInDist = () => {
-  const watcher = gulp.watch(['dist/**/*']);
+  const watcher = gulp.watch(['dist/**/*']); // TODO: remove array
   watcher
-    .on('add', path => console.log(`File ${path} was added`))
-    .on('change', path => console.log(`File ${path} was changed`))
-    .on('unlink', path => console.log(`File ${path} was removed`));
+    .on('add', pathname => console.log(`File ${pathname} was added`))
+    .on('change', pathname => console.log(`File ${pathname} was changed`))
+    .on('unlink', pathname => console.log(`File ${pathname} was removed`));
 };
 
-const watchManualRestart = done => {
+const watchManualRestart = async () => {
   const terminal = readline.createInterface({ input: process.stdin });
   terminal.on('line', input => {
-    if (input === 'rs') series(parallel(transpileServerJs, transpileServerViews), restartServer)();
+    if (input === 'rs') {
+      series(parallel(transpileServerJs, transpileCP, transpileCC), restartServer)();
+    }
   });
-  done();
 };
 
-const watch = done => {
-  gulp.watch(paths.public.src, series(copyPublicDev, restartServer, reloadDevServer));
+const watch = async () => {
+  gulp.watch(paths.public.src, series(copyPublicDev, restartServer, reloadBrowser));
   gulp.watch(paths.serverJs.src, series(transpileServerJs, restartServer));
-  gulp.watch(paths.serverViews.src, series(transpileServerViews, restartServer, reloadDevServer));
-  // gulp.watch(
-  //   paths.serverStyles.src,
-  //   series(parallel(fakeBundleClient, series(transpileServerViews, restartServer)), reloadDevServer)
-  // );
-  // need to transpile all views, because nothing changed sinceLastRun
+  gulp
+    .watch(paths.client.pages)
+    .on('change', series(parallel(waitBundleClient, transpileCP), reloadBrowser))
+    .on('add', async pathname => {
+      await generateClientPages(path.resolve(__dirname, pathname));
+      restartWebpack();
+    });
+  gulp
+    .watch(paths.client.components)
+    .on('change', series(parallel(waitBundleClient, transpileCC), reloadBrowser));
+  gulp.watch(paths.client.cssModules).on('change', async pathname => {
+    const dirs = pathname.split('/').slice(0, -1);
+    const src = dirs.concat('*').join('/');
+    const dest = `dist/${dirs.join('/')}`;
 
-  gulp.watch(paths.client.src, series(fakeBundleClient, reloadDevServer));
+    await Promise.all([finished(transpileFolder(src, dest)), waitBundleClient()]);
+    reloadBrowser();
+  });
+
   trackChangesInDist();
-  done();
 };
 
 const dev = series(
   clean,
   watchManualRestart,
-  parallel(copyPublicDev, transpileServerJs, transpileServerViews, startDevServer),
+  parallel(copyPublicDev, transpileServerJs, transpileCP, transpileCC, startDevServer),
+  generateClientPages,
+  startWebpack,
   startServer,
   watch
 );
 
-const build = series(clean, copyPublic, bundleClient, transpileServerJs, transpileServerViews);
+const build = series(clean, copyPublic, bundleClient, transpileServerJs, transpileCP, transpileCC);
 
 module.exports = {
   dev,

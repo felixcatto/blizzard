@@ -1,5 +1,8 @@
 import React from 'react';
-import { roles } from '../../lib/utils';
+import { compile } from 'path-to-regexp';
+import { roles } from '../../lib/sharedUtils';
+
+export * from '../../lib/sharedUtils';
 
 export const Link = ({ href, method, children }) => (
   <form method="POST" action={href} className="fake-link">
@@ -19,4 +22,20 @@ export const userRolesToIcons = {
   [roles.admin]: 'fa fa-star',
   [roles.user]: 'fa fa-fire',
   [roles.guest]: 'fa fa-ghost',
+};
+
+export const makeUrlFor = rawRoutes => {
+  const routes = Object.keys(rawRoutes).reduce(
+    (acc, name) => ({ ...acc, [name]: compile(rawRoutes[name]) }),
+    {}
+  );
+
+  return (name, args, opts) => {
+    const toPath = routes[name];
+    if (!toPath) {
+      throw new Error(`Route with name ${name} is not registered`);
+    }
+
+    return toPath(args, opts);
+  };
 };

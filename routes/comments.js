@@ -14,7 +14,7 @@ export default async app => {
     { name: 'editComment', preHandler: isCommentBelongsToUser },
     async (request, reply) => {
       const comment = await Comment.query().findById(request.params.commentId);
-      reply.render('comments/edit', { comment });
+      reply.render('comments/Edit', { comment });
     }
   );
 
@@ -28,7 +28,7 @@ export default async app => {
           .findById(articleId)
           .withGraphFetched('[author, comments.author]');
 
-        return reply.render('articles/show', {
+        return reply.render('articles/Show', {
           article,
           newComment: { ...request.body, errors: request.errors },
         });
@@ -51,7 +51,7 @@ export default async app => {
       const articleId = request.params.id;
       const { commentId } = request.params;
       if (request.errors) {
-        return reply.render('comments/edit', {
+        return reply.render('comments/Edit', {
           comment: {
             ...request.body,
             errors: request.errors,

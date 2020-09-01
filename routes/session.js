@@ -6,7 +6,7 @@ export default async app => {
   const { urlFor } = app.ctx;
 
   app.get('/session/new', { name: 'newSession' }, async (request, reply) => {
-    reply.render('common/session', { user: emptyObject });
+    reply.render('common/Session', { user: emptyObject });
   });
 
   app.post(
@@ -14,12 +14,12 @@ export default async app => {
     { name: 'session', preHandler: validate(User.yupLoginSchema) },
     async (request, reply) => {
       if (request.errors) {
-        return reply.render('common/session', { user: request.entityWithErrors });
+        return reply.render('common/Session', { user: request.entityWithErrors });
       }
 
       const user = await User.query().findOne('email', request.data.email);
       if (!user) {
-        return reply.render('common/session', {
+        return reply.render('common/Session', {
           user: {
             ...request.data,
             errors: { email: 'User with such email not found' },
@@ -28,7 +28,7 @@ export default async app => {
       }
 
       if (user.password_digest !== encrypt(request.data.password)) {
-        return reply.render('common/session', {
+        return reply.render('common/Session', {
           user: {
             ...request.data,
             errors: { password: 'Wrong password' },

@@ -1,5 +1,5 @@
 export default async app => {
   app.get('/', { name: 'home' }, (request, reply) => {
-    reply.render('common/index');
+    reply.render('common/Index');
   });
 };

@@ -6,11 +6,11 @@ export default async app => {
 
   app.get('/tags', { name: 'tags' }, async (request, reply) => {
     const tags = await Tag.query();
-    reply.render('tags/index', { tags });
+    reply.render('tags/Index', { tags });
   });
 
   app.get('/tags/new', { name: 'newTag', preHandler: checkSignedIn }, async (request, reply) => {
-    reply.render('tags/new', { tag: emptyObject });
+    reply.render('tags/New', { tag: emptyObject });
   });
 
   app.get(
@@ -18,7 +18,7 @@ export default async app => {
     { name: 'editTag', preHandler: checkSignedIn },
     async (request, reply) => {
       const tag = await Tag.query().findById(request.params.id);
-      reply.render('tags/edit', { tag });
+      reply.render('tags/Edit', { tag });
     }
   );
 
@@ -27,7 +27,7 @@ export default async app => {
     { preHandler: [checkSignedIn, validate(Tag.yupSchema)] },
     async (request, reply) => {
       if (request.errors) {
-        return reply.render('tags/new', {
+        return reply.render('tags/New', {
           tag: request.entityWithErrors,
         });
       }
@@ -42,7 +42,7 @@ export default async app => {
     { name: 'tag', preHandler: [checkSignedIn, validate(Tag.yupSchema)] },
     async (request, reply) => {
       if (request.errors) {
-        return reply.render('tags/edit', {
+        return reply.render('tags/Edit', {
           tag: request.entityWithErrors,
         });
       }

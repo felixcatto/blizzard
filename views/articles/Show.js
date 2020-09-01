@@ -1,9 +1,9 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { isEmpty } from 'lodash';
-import Layout from '../common/Layout';
+import Layout from '../common/layout';
 import { Link, userRolesToIcons } from '../common/utils';
-import { roles } from '../../lib/utils';
+import { roles } from '../../lib/sharedUtils';
 import CommentForm from '../comments/form';
 import s from './styles.module.scss';
 

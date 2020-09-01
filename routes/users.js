@@ -6,11 +6,11 @@ export default async app => {
 
   app.get('/users', { name: 'users' }, async (request, reply) => {
     const users = await User.query();
-    reply.render('users/index', { users });
+    reply.render('users/Index', { users });
   });
 
   app.get('/users/new', { name: 'newUser', preHandler: checkAdmin }, async (request, reply) => {
-    reply.render('users/new', { user: emptyObject, roles });
+    reply.render('users/New', { user: emptyObject, roles });
   });
 
   app.get(
@@ -18,7 +18,7 @@ export default async app => {
     { name: 'editUser', preHandler: checkAdmin },
     async (request, reply) => {
       const user = await User.query().findById(request.params.id);
-      reply.render('users/edit', { user, roles });
+      reply.render('users/Edit', { user, roles });
     }
   );
 
@@ -27,7 +27,7 @@ export default async app => {
     { preHandler: [checkAdmin, validate(User.yupSchema)] },
     async (request, reply) => {
       if (request.errors) {
-        return reply.render('users/new', {
+        return reply.render('users/New', {
           user: request.entityWithErrors,
           roles,
         });
@@ -35,7 +35,7 @@ export default async app => {
 
       const { isUnique, errors } = await checkValueUnique(User, 'email', request.data.email);
       if (!isUnique) {
-        return reply.render('users/new', {
+        return reply.render('users/New', {
           user: { ...request.data, ...errors },
           roles,
         });
@@ -52,7 +52,7 @@ export default async app => {
     async (request, reply) => {
       const { id } = request.params;
       if (request.errors) {
-        return reply.render('users/edit', {
+        return reply.render('users/Edit', {
           user: request.entityWithErrors,
           roles,
         });
@@ -60,7 +60,7 @@ export default async app => {
 
       const { isUnique, errors } = await checkValueUnique(User, 'email', request.data.email, id);
       if (!isUnique) {
-        return reply.render('users/edit', {
+        return reply.render('users/Edit', {
           user: { ...request.data, ...errors },
           roles,
         });

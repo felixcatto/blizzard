@@ -13,7 +13,7 @@ export default async app => {
 
   app.get('/articles', { name: 'articles' }, async (request, reply) => {
     const articles = await Article.query().withGraphFetched('[author, tags]');
-    reply.render('articles/index', { articles });
+    reply.render('articles/Index', { articles });
   });
 
   app.get(
@@ -21,7 +21,7 @@ export default async app => {
     { name: 'newArticle', preHandler: checkSignedIn },
     async (request, reply) => {
       const tags = await Tag.query();
-      reply.render('articles/new', { article: emptyObject, tags });
+      reply.render('articles/New', { article: emptyObject, tags });
     }
   );
 
@@ -29,7 +29,7 @@ export default async app => {
     const article = await Article.query()
       .findById(request.params.id)
       .withGraphFetched('[author, comments.author, tags]');
-    reply.render('articles/show', { article, newComment: emptyObject });
+    reply.render('articles/Show', { article, newComment: emptyObject });
   });
 
   app.get(
@@ -38,7 +38,7 @@ export default async app => {
     async (request, reply) => {
       const article = await Article.query().findById(request.params.id).withGraphFetched('tags');
       const tags = await Tag.query();
-      reply.render('articles/edit', { article, tags });
+      reply.render('articles/Edit', { article, tags });
     }
   );
 
@@ -48,7 +48,7 @@ export default async app => {
     async (request, reply) => {
       if (request.errors) {
         const tags = await Tag.query();
-        return reply.render('articles/new', {
+        return reply.render('articles/New', {
           article: request.entityWithErrors,
           tags,
         });
@@ -73,7 +73,7 @@ export default async app => {
     async (request, reply) => {
       if (request.errors) {
         const tags = await Tag.query();
-        return reply.render('articles/edit', {
+        return reply.render('articles/Edit', {
           article: request.entityWithErrors,
           tags,
         });

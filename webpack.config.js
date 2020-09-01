@@ -1,42 +1,18 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { WebpackPluginServe: Serve } = require('webpack-plugin-serve');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const babelConfig = require('./babelconfig.js');
-const { getWebpackEntries, generateScopedName } = require('./lib/devUtils');
-
-const devServer = new Serve({
-  hmr: false,
-  client: { silent: true },
-  middleware: (app, builtins) => {
-    app.use(
-      builtins.proxy(pathname => pathname !== '/wps', {
-        target: 'http://localhost:4000',
-      })
-    );
-  },
-});
-
-const viewsPath = path.resolve(__dirname, 'views');
-const clientPages = getWebpackEntries(viewsPath).reduce(
-  (acc, entry) => ({
-    ...acc,
-    [entry]: path.resolve(viewsPath, entry),
-  }),
-  {}
-);
+const { makeWebpackEntries, generateScopedName } = require('./lib/devUtils');
 
 const common = {
   entry: {
-    'index.js': [
-      path.resolve(__dirname, 'client/index.js'),
-      path.resolve(__dirname, 'views/common/serverStyles.js'),
-    ],
-    ...clientPages,
+    'index.css': path.resolve(__dirname, 'views/css/index.scss'),
+    'index.js': path.resolve(__dirname, 'views/lib/index.js'),
+    ...makeWebpackEntries(),
   },
   output: {
-    filename: 'js/[name]',
-    path: path.resolve(__dirname, 'dist/public'),
+    filename: '[name]',
+    path: path.resolve(__dirname, 'dist/public/js'),
   },
   module: {
     rules: [
@@ -49,7 +25,7 @@ const common = {
         },
       },
       {
-        test: /module\.scss$/,
+        test: /\.scss$/,
         use: [
           MiniCssExtractPlugin.loader,
           {
@@ -57,6 +33,7 @@ const common = {
             options: {
               url: false,
               modules: {
+                auto: true,
                 getLocalIdent: ({ resourcePath }, _, localName) =>
                   generateScopedName(localName, resourcePath),
               },
@@ -65,20 +42,25 @@ const common = {
           'sass-loader',
         ],
       },
-      {
-        test: /(?<!module)\.scss$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: { url: false },
-          },
-          'sass-loader',
-        ],
-      },
     ],
   },
-  plugins: [new MiniCssExtractPlugin({ filename: 'css/index.css' })],
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].css', // TODO: remove me
+    }),
+  ],
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        styles: {
+          name: '../css/index',
+          test: /(\.css|\.scss)$/,
+          chunks: 'all',
+          enforce: true,
+        },
+      },
+    },
+  },
   stats: {
     warnings: false,
     children: false,
@@ -99,13 +81,11 @@ if (process.env.ANALYZE) {
     mode: 'production',
   };
 } else {
-  const plugins = [devServer].concat(common.plugins);
-  common.entry['index.js'] = common.entry['index.js'].concat('webpack-plugin-serve/client');
+  common.entry['index.js'] = [common.entry['index.js'], 'blunt-livereload/dist/client'];
 
   module.exports = {
     ...common,
     mode: 'development',
     devtool: 'cheap-module-eval-source-map',
-    plugins,
   };
 }

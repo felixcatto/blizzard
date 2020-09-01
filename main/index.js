@@ -4,13 +4,9 @@ import fastify from 'fastify';
 import fastifyStatic from 'fastify-static';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
 import fastifySecureSession from 'fastify-secure-session';
-import { reactRenderPlugin, objectionPlugin, urlForPlugin } from '../lib/utils';
-import { getWebpackEntries } from '../lib/devUtils';
+import { reactRenderPlugin, objectionPlugin, routesPlugin } from '../lib/utils';
 import routes from '../routes';
 import * as models from '../models';
-
-const mode = process.env.NODE_ENV || 'development';
-const pathPublic = path.resolve(__dirname, '../public');
 
 export default () => {
   const app = fastify({
@@ -20,12 +16,15 @@ export default () => {
     },
   });
 
-  const viewsDir = path.resolve(__dirname, '../views');
+  const mode = process.env.NODE_ENV || 'development';
+  const pathPublic = path.resolve(__dirname, '../public');
+  const viewsPath = path.resolve(__dirname, '../views');
   app.decorate('ctx', {
     template: fs.readFileSync(path.resolve(__dirname, pathPublic, 'html/index.html'), 'utf8'),
-    viewsDir,
-    webpackEntries: getWebpackEntries(viewsDir),
-    urlFor: null,
+    viewsPath,
+    urlFor: fastifyReverseRoutes,
+    routes: null,
+    isDevelopment: mode === 'development',
   });
   app.decorate('objection', null);
   app.decorateReply('render', null);
@@ -38,8 +37,8 @@ export default () => {
     secret: 'a secret with minimum length of 32 characters',
     cookie: { path: '/' },
   });
+  app.register(routesPlugin);
   app.register(fastifyReverseRoutes.plugin);
-  app.register(urlForPlugin);
   app.register(fastifyStatic, { root: pathPublic });
   app.register(objectionPlugin, { mode, models });
   app.register(reactRenderPlugin);
