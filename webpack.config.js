@@ -58,6 +58,11 @@ const common = {
           chunks: 'all',
           enforce: true,
         },
+        vendor: {
+          test: /(lodash|react|react-dom)/,
+          name: 'vendors.js',
+          chunks: 'all',
+        },
       },
     },
   },

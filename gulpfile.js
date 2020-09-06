@@ -72,12 +72,10 @@ const restartServer = async () => {
 process.on('exit', () => server && server.kill());
 
 const webpackEmitter = new EventEmitter();
-let webpackConfig;
 let webpackWatching;
 const startWebpack = done => {
   clearCache(require.resolve('./webpack.config.js'));
-  webpackConfig = require('./webpack.config.js'); // eslint-disable-line
-  const compiler = webpack(webpackConfig);
+  const compiler = webpack(require('./webpack.config.js')); // eslint-disable-line
   compiler.hooks.done.tap('done', () => webpackEmitter.emit('webpackDone'));
   webpackWatching = compiler.watch({}, done);
 };
@@ -126,8 +124,8 @@ const transpileCP = () =>
     })
     .pipe(babel(babelConfig.server))
     .pipe(gulp.dest(paths.client.dest));
-const transpileFolder = (src, dest) =>
-  gulp.src(src).pipe(babel(babelConfig.server)).pipe(gulp.dest(dest));
+const transpileFolder = async (src, dest) =>
+  finished(gulp.src(src).pipe(babel(babelConfig.server)).pipe(gulp.dest(dest)));
 
 const trackChangesInDist = () => {
   const watcher = gulp.watch(['dist/**/*']); // TODO: remove array
@@ -164,7 +162,7 @@ const watch = async () => {
     const src = dirs.concat('*').join('/');
     const dest = `dist/${dirs.join('/')}`;
 
-    await Promise.all([finished(transpileFolder(src, dest)), waitBundleClient()]);
+    await Promise.all([transpileFolder(src, dest), waitBundleClient()]);
     reloadBrowser();
   });
 
@@ -181,7 +179,12 @@ const dev = series(
   watch
 );
 
-const build = series(clean, copyPublic, bundleClient, transpileServerJs, transpileCP, transpileCC);
+const build = series(
+  clean,
+  parallel(copyPublic, transpileServerJs, transpileCP, transpileCC),
+  generateClientPages,
+  bundleClient
+);
 
 module.exports = {
   dev,

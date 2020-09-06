@@ -2,8 +2,7 @@ import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { isEmpty } from 'lodash';
 import Layout from '../common/layout';
-import { Link, userRolesToIcons } from '../common/utils';
-import { roles } from '../../lib/sharedUtils';
+import { Link, userRolesToIcons, roles } from '../common/utils';
 import CommentForm from '../comments/form';
 import s from './styles.module.scss';
 

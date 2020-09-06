@@ -18,9 +18,11 @@ webpack-bundle:
 webpack-bundle-analyze:
 	NODE_ENV=production ANALYZE=true npx wp
 
-madge:
-	npx gulp buildForMadge
+madge: madge-build
 	madge --image g.svg dist
+
+madge-build:
+	npx gulp buildForMadge
 
 madge-depends-on-file:
 	madge --exclude '^dist/*' --depends $(arg) .

@@ -3,8 +3,8 @@ exports.up = async knex => {
     table.increments().primary();
     table.string('title');
     table.text('text');
-    table.timestamp('created_at').defaultTo(new Date().toISOString());
-    table.timestamp('updated_at').defaultTo(new Date().toISOString());
+    table.string('created_at').defaultTo(new Date().toISOString());
+    table.string('updated_at').defaultTo(new Date().toISOString());
     table.integer('author_id').unsigned().references('users.id').onDelete('set null');
   });
 };
