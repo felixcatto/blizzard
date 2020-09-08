@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../common/layout';
-import { Link } from '../common/utils';
+import { Link } from '../lib/utils';
 
 export default ({ urlFor, articles, isSignedIn, isBelongsToUser }) => (
   <Layout>

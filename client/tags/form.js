@@ -1,6 +1,6 @@
 import React from 'react';
-import Context from '../common/context';
-import { Error } from '../common/utils';
+import Context from '../lib/context';
+import { Error } from '../lib/utils';
 
 export default ({ tag, method = 'post' }) => {
   const { urlFor } = React.useContext(Context);

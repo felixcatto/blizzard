@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
-import Context from './context';
-import { Link, userRolesToIcons } from './utils';
+import Context from '../lib/context';
+import { Link, userRolesToIcons } from '../lib/utils';
 
 export default ({ children }) => {
   const { urlFor, curPath, currentUser, isSignedIn } = React.useContext(Context);

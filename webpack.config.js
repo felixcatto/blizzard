@@ -6,8 +6,8 @@ const { makeWebpackEntries, generateScopedName } = require('./lib/devUtils');
 
 const common = {
   entry: {
-    'index.css': path.resolve(__dirname, 'views/css/index.scss'),
-    'index.js': path.resolve(__dirname, 'views/lib/index.js'),
+    'index.css': path.resolve(__dirname, 'client/css/index.scss'),
+    'index.js': path.resolve(__dirname, 'client/lib/index.js'),
     ...makeWebpackEntries(),
   },
   output: {
@@ -66,11 +66,7 @@ const common = {
       },
     },
   },
-  stats: {
-    warnings: false,
-    children: false,
-    modules: false,
-  },
+  stats: { warnings: false, modules: false },
 };
 
 if (process.env.ANALYZE) {

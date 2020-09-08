@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 import Layout from '../common/layout';
-import { Link, userRolesToIcons } from '../common/utils';
+import { Link, userRolesToIcons } from '../lib/utils';
 
 const userIconClass = role => cn('mr-5', userRolesToIcons[role]);
 

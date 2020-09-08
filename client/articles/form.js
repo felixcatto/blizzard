@@ -1,6 +1,6 @@
 import React from 'react';
-import Context from '../common/context';
-import { Error } from '../common/utils';
+import Context from '../lib/context';
+import { Error } from '../lib/utils';
 import TagsSelect from '../components/tagsSelect';
 
 export default ({ article, tags, method = 'post' }) => {

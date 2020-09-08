@@ -27,7 +27,7 @@ const paths = {
       'knexfile.js',
       '!node_modules/**',
       '!dist/**',
-      '!views/**',
+      '!client/**',
       '!__tests__/**',
       '!seeds/**',
       '!migrations/**',
@@ -35,10 +35,10 @@ const paths = {
     dest: 'dist',
   },
   client: {
-    pages: 'views/**/[A-Z]*.js',
-    components: 'views/**/[a-z]*.js',
-    cssModules: 'views/**/*.module.scss',
-    dest: 'dist/views',
+    pages: 'client/**/[A-Z]*.js',
+    components: 'client/**/[a-z]*.js',
+    cssModules: 'client/**/*.module.scss',
+    dest: 'dist/client',
   },
   madge: {
     allFilesSrc: ['**', '!node_modules/**'],

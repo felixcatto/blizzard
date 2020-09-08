@@ -9,6 +9,11 @@ import routes from '../routes';
 import * as models from '../models';
 
 export default () => {
+  const mode = process.env.NODE_ENV || 'development';
+  const pathPublic = path.resolve(__dirname, '../public');
+  const viewsPath = path.resolve(__dirname, '../client');
+  const template = fs.readFileSync(path.resolve(__dirname, pathPublic, 'html/index.html'), 'utf8');
+
   const app = fastify({
     logger: {
       prettyPrint: true,
@@ -16,11 +21,8 @@ export default () => {
     },
   });
 
-  const mode = process.env.NODE_ENV || 'development';
-  const pathPublic = path.resolve(__dirname, '../public');
-  const viewsPath = path.resolve(__dirname, '../views');
   app.decorate('ctx', {
-    template: fs.readFileSync(path.resolve(__dirname, pathPublic, 'html/index.html'), 'utf8'),
+    template,
     viewsPath,
     urlFor: fastifyReverseRoutes,
     routes: null,
