@@ -40,7 +40,7 @@ describe('users', () => {
   it('GET /users/:id/edit', async () => {
     const res = await server.inject({
       method: 'GET',
-      url: '/users/1/edit',
+      url: '/users/-1/edit',
       cookies: loginCookie,
     });
     expect(res.statusCode).toBe(200);
@@ -87,7 +87,7 @@ describe('users', () => {
     };
     const res = await server.inject({
       method: 'put',
-      url: '/users/1',
+      url: `/users/${user.id}`,
       payload: user,
       cookies: loginCookie,
     });
@@ -99,12 +99,13 @@ describe('users', () => {
   });
 
   it('DELETE /users/:id', async () => {
+    const [user] = usersFixture;
     const res = await server.inject({
       method: 'delete',
-      url: '/users/1',
+      url: `/users/${user.id}`,
       cookies: loginCookie,
     });
-    const userFromDb = await User.query().findById(1);
+    const userFromDb = await User.query().findById(user.id);
     expect(res.statusCode).toBe(302);
     expect(userFromDb).toBeFalsy();
   });

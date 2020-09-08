@@ -31,7 +31,7 @@ describe('articles', () => {
   it('GET /articles/:id/comments/:id/edit', async () => {
     const res = await server.inject({
       method: 'GET',
-      url: '/articles/3/comments/4/edit',
+      url: '/articles/-3/comments/-4/edit',
       cookies: loginCookie,
     });
     expect(res.statusCode).toBe(200);
@@ -44,7 +44,7 @@ describe('articles', () => {
     };
     const res = await server.inject({
       method: 'post',
-      url: '/articles/1/comments',
+      url: '/articles/-1/comments',
       payload: comment,
     });
 

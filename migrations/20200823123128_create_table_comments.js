@@ -5,8 +5,8 @@ exports.up = async knex => {
     table.text('text');
     table.string('created_at').defaultTo(new Date().toISOString());
     table.string('updated_at').defaultTo(new Date().toISOString());
-    table.integer('author_id').unsigned().references('users.id').onDelete('set null');
-    table.integer('article_id').unsigned().references('articles.id').onDelete('cascade');
+    table.integer('author_id').references('users.id').onDelete('set null');
+    table.integer('article_id').references('articles.id').onDelete('cascade');
   });
 };
 

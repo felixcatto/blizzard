@@ -54,7 +54,7 @@ describe('articles', () => {
   it('GET /articles/:id/edit', async () => {
     const res = await server.inject({
       method: 'GET',
-      url: '/articles/1/edit',
+      url: '/articles/-1/edit',
       cookies: loginCookie,
     });
     expect(res.statusCode).toBe(200);
@@ -118,7 +118,7 @@ describe('articles', () => {
   it('PUT /articles/:id with tags', async () => {
     const article = {
       ...articlesFixture[1],
-      tagIds: [1, 3],
+      tagIds: [-1, -3],
     };
     const res = await server.inject({
       method: 'put',

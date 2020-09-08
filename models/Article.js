@@ -44,7 +44,7 @@ export class Article extends Model {
   }
 
   get tagIds() {
-    return this.tags ? this.tags.map(tag => tag.id) : [];
+    return this.tags ? this.tags.map(tag => tag.id).sort() : [];
   }
 
   $beforeInsert() {

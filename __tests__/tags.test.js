@@ -1,15 +1,20 @@
 import getApp from '../main';
 import tagsFixture from './fixtures/tags';
+import usersFixture from './fixtures/users';
 import { getLoginCookie } from './fixtures/utils';
 
 describe('tags', () => {
   const server = getApp();
   let Tag;
+  let User;
   let loginCookie;
 
   beforeAll(async () => {
     await server.ready();
+    User = server.objection.User;
     Tag = server.objection.Tag;
+    await User.query().delete();
+    await User.query().insertGraph(usersFixture);
     loginCookie = await getLoginCookie(server);
   });
 
@@ -38,7 +43,7 @@ describe('tags', () => {
   it('GET /tags/:id/edit', async () => {
     const res = await server.inject({
       method: 'GET',
-      url: '/tags/1/edit',
+      url: '/tags/-1/edit',
       cookies: loginCookie,
     });
     expect(res.statusCode).toBe(200);
