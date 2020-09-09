@@ -31,6 +31,9 @@ export default ({ children }) => {
               <a href={urlFor('tags')} className={linkClass(urlFor('tags'))}>
                 Tags
               </a>
+              <a href={urlFor('structure')} className={linkClass(urlFor('structure'))}>
+                Project Structure
+              </a>
             </div>
           </div>
           {isSignedIn ? (
