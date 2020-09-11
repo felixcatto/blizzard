@@ -6,8 +6,10 @@ const { makeWebpackEntries, generateScopedName } = require('./lib/devUtils');
 
 const common = {
   entry: {
-    'index.css': path.resolve(__dirname, 'client/css/index.scss'),
-    'index.js': path.resolve(__dirname, 'client/lib/index.js'),
+    'index.js': [
+      path.resolve(__dirname, 'client/css/index.scss'),
+      path.resolve(__dirname, 'client/lib/index.js'),
+    ],
     ...makeWebpackEntries(),
   },
   output: {
@@ -44,11 +46,7 @@ const common = {
       },
     ],
   },
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: '[name].css', // TODO: remove me
-    }),
-  ],
+  plugins: [new MiniCssExtractPlugin()],
   optimization: {
     splitChunks: {
       cacheGroups: {
@@ -82,7 +80,7 @@ if (process.env.ANALYZE) {
     mode: 'production',
   };
 } else {
-  common.entry['index.js'] = [common.entry['index.js'], 'blunt-livereload/dist/client'];
+  common.entry['index.js'] = common.entry['index.js'].concat('blunt-livereload/dist/client');
 
   module.exports = {
     ...common,
