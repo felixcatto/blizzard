@@ -4,14 +4,14 @@ const afterCreate = (conn, done) => {
 
 module.exports = {
   development: {
-    client: 'sqlite3',
+    client: 'pg',
     connection: {
-      filename: 'database.sqlite',
-      // 'database.sqlite' -> migrations + test
-      // '../database.sqlite' -> development?
+      host: '127.0.0.1',
+      user: 'postgres',
+      password: '1',
+      database: 'blizzard',
     },
     useNullAsDefault: true,
-    pool: { afterCreate },
     migrations: {
       stub: 'lib/migrationStub.js',
     },
@@ -24,9 +24,9 @@ module.exports = {
     client: 'pg',
     connection: {
       host: '127.0.0.1',
-      user: 'felixcatto',
+      user: 'postgres',
       password: '1',
-      database: 'postgres',
+      database: 'blizzard_test',
     },
     useNullAsDefault: true,
   },
@@ -42,9 +42,9 @@ module.exports = {
     client: 'pg',
     connection: {
       host: '127.0.0.1',
-      user: 'felixcatto',
+      user: 'postgres',
       password: '1',
-      database: 'postgres',
+      database: 'blizzard',
     },
     useNullAsDefault: true,
   },

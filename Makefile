@@ -5,7 +5,7 @@ start:
 	npx gulp dev
 
 start-production:
-	NODE_ENV=test node dist/bin/server.js
+	NODE_ENV=production node dist/bin/server.js
 
 build:
 	NODE_ENV=production npx gulp build
@@ -59,3 +59,16 @@ al-seed:
 
 al-seed-new:
 	npx knex seed:make $(arg)
+
+database-build:
+	docker build -t blizzard-db migrations
+
+database-up:
+	docker run --rm -d -e POSTGRES_PASSWORD=1 \
+	-p 5432:5432 \
+	-v blizzard-db:/var/lib/postgresql/data \
+	--name=blizzard-db \
+	blizzard-db
+
+database-down:
+	docker stop blizzard-db
