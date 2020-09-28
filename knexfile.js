@@ -1,12 +1,10 @@
-const afterCreate = (conn, done) => {
-  conn.run('PRAGMA foreign_keys=on', done);
-};
+const POSTGRES_HOST = process.env.POSTGRES_HOST || '127.0.0.1';
 
 module.exports = {
   development: {
     client: 'pg',
     connection: {
-      host: '127.0.0.1',
+      host: POSTGRES_HOST,
       user: 'postgres',
       password: '1',
       database: 'blizzard',
@@ -23,7 +21,7 @@ module.exports = {
   test: {
     client: 'pg',
     connection: {
-      host: '127.0.0.1',
+      host: POSTGRES_HOST,
       user: 'postgres',
       password: '1',
       database: 'blizzard_test',
@@ -31,17 +29,10 @@ module.exports = {
     useNullAsDefault: true,
   },
 
-  sandbox: {
-    client: 'sqlite3',
-    connection: ':memory:',
-    useNullAsDefault: true,
-    pool: { afterCreate },
-  },
-
   production: {
     client: 'pg',
     connection: {
-      host: '127.0.0.1',
+      host: POSTGRES_HOST,
       user: 'postgres',
       password: '1',
       database: 'blizzard',

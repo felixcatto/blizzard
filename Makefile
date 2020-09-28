@@ -9,8 +9,6 @@ start-production:
 
 build:
 	NODE_ENV=production npx gulp build
-	NODE_ENV=production make migrate
-	NODE_ENV=production make al-seed
 
 webpack-bundle:
 	NODE_ENV=production npx wp
@@ -54,21 +52,31 @@ migrate-rollback:
 migrate-list:
 	npx knex migrate:list
 
-al-seed:
-	npx knex --esm seed:run
-
-al-seed-new:
-	npx knex seed:make $(arg)
-
 database-build:
-	docker build -t blizzard-db migrations
+	docker build -t blizzard_database migrations
 
 database-up:
 	docker run --rm -d -e POSTGRES_PASSWORD=1 \
 	-p 5432:5432 \
-	-v blizzard-db:/var/lib/postgresql/data \
-	--name=blizzard-db \
-	blizzard-db
+	-v blizzard_database:/var/lib/postgresql/data \
+	--name=blizzard_database \
+	blizzard_database
 
 database-down:
-	docker stop blizzard-db
+	docker stop blizzard_database
+
+database-seed:
+	npx knex --esm seed:run
+
+database-seed-new:
+	npx knex seed:make $(arg)
+
+compose-build:
+	docker-compose build
+
+compose-up:
+	docker-compose up -d
+	docker-compose run app make migrate
+
+compose-down:
+	docker-compose down
