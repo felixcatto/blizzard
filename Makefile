@@ -80,3 +80,6 @@ compose-up:
 
 compose-down:
 	docker-compose down
+
+compose-seed:
+	docker-compose run app make database-seed
