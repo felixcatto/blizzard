@@ -53,7 +53,7 @@ migrate-list:
 	npx knex migrate:list
 
 database-build:
-	docker build -t blizzard_database migrations
+	docker build -t blizzard_database services/database
 
 database-up:
 	docker run --rm -d -e POSTGRES_PASSWORD=1 \

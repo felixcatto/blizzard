@@ -31,6 +31,7 @@ const paths = {
       '!__tests__/**',
       '!seeds/**',
       '!migrations/**',
+      '!services/**',
     ],
     dest: 'dist',
   },

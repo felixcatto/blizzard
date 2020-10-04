@@ -76,7 +76,7 @@ describe('articles', () => {
     const [comment] = commentsFixture;
     const res = await server.inject({
       method: 'delete',
-      url: `/articles/:id/comments/${comment.id}`,
+      url: `/articles/${comment.article_id}/comments/${comment.id}`,
       cookies: loginCookie,
     });
 
