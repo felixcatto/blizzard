@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const babelConfig = require('./babelconfig.js');
 const { makeWebpackEntries, generateScopedName } = require('./lib/devUtils');
@@ -46,13 +47,14 @@ const common = {
       },
     ],
   },
-  plugins: [new MiniCssExtractPlugin()],
+  plugins: [new MiniCssExtractPlugin({ filename: '../css/index.css' })],
   optimization: {
+    minimizer: [`...`, new CssMinimizerPlugin()],
     splitChunks: {
       cacheGroups: {
         styles: {
-          name: '../css/index',
-          test: /(\.css|\.scss)$/,
+          name: 'styles',
+          type: 'css/mini-extract',
           chunks: 'all',
           enforce: true,
         },
@@ -80,11 +82,11 @@ if (process.env.ANALYZE) {
     mode: 'production',
   };
 } else {
-  common.entry['index.js'] = common.entry['index.js'].concat('blunt-livereload/dist/client');
+  common.entry['index.js'] = ['blunt-livereload/dist/client'].concat(common.entry['index.js']);
 
   module.exports = {
     ...common,
     mode: 'development',
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'eval-cheap-module-source-map',
   };
 }
