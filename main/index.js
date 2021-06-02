@@ -13,6 +13,8 @@ export default () => {
   const pathPublic = path.resolve(__dirname, '../public');
   const viewsPath = path.resolve(__dirname, '../client');
   const template = fs.readFileSync(path.resolve(__dirname, pathPublic, 'html/index.html'), 'utf8');
+  const manifest =
+    fs.readFileSync(path.resolve(__dirname, pathPublic, 'manifest.json'), 'utf8') |> JSON.parse;
 
   const app = fastify({
     logger: {
@@ -23,6 +25,7 @@ export default () => {
 
   app.decorate('ctx', {
     template,
+    manifest,
     viewsPath,
     urlFor: fastifyReverseRoutes,
     routes: null,

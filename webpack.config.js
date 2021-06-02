@@ -1,21 +1,21 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const babelConfig = require('./babelconfig.js');
 const { makeWebpackEntries, generateScopedName } = require('./lib/devUtils');
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const common = {
   entry: {
-    'index.js': [
-      path.resolve(__dirname, 'client/css/index.scss'),
-      path.resolve(__dirname, 'client/lib/index.js'),
-    ],
+    index: path.resolve(__dirname, 'client/lib/index.js'),
     ...makeWebpackEntries(),
   },
   output: {
-    filename: '[name]',
-    path: path.resolve(__dirname, 'dist/public/js'),
+    filename: isProduction ? 'js/[name].[contenthash:8].js' : 'js/[name].js',
+    path: path.resolve(__dirname, 'dist/public'),
   },
   module: {
     rules: [
@@ -47,7 +47,12 @@ const common = {
       },
     ],
   },
-  plugins: [new MiniCssExtractPlugin({ filename: '../css/index.css' })],
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: isProduction ? 'css/index.[contenthash:8].css' : 'css/index.css',
+    }),
+    new WebpackManifestPlugin({ publicPath: '/' }),
+  ],
   optimization: {
     minimizer: [`...`, new CssMinimizerPlugin()],
     splitChunks: {
@@ -59,14 +64,14 @@ const common = {
           enforce: true,
         },
         vendor: {
-          test: /(lodash|react|react-dom)/,
-          name: 'vendors.js',
+          test: /[\\/](.*react.*|lodash.*)[\\/]/,
+          name: 'vendors',
           chunks: 'all',
         },
       },
     },
   },
-  stats: { warnings: false, modules: false },
+  stats: { warnings: false, children: false, modules: false },
 };
 
 if (process.env.ANALYZE) {
@@ -82,7 +87,7 @@ if (process.env.ANALYZE) {
     mode: 'production',
   };
 } else {
-  common.entry['index.js'] = ['blunt-livereload/dist/client'].concat(common.entry['index.js']);
+  common.entry['index'] = ['blunt-livereload/dist/client', common.entry['index']];
 
   module.exports = {
     ...common,
