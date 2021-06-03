@@ -64,7 +64,7 @@ const common = {
           enforce: true,
         },
         vendor: {
-          test: /[\\/](.*react.*|lodash.*)[\\/]/,
+          test: /[\\/]node_modules[\\/](?!bootstrap|@hotwired).*/,
           name: 'vendors',
           chunks: 'all',
         },

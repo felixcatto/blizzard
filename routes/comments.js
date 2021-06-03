@@ -28,7 +28,7 @@ export default async app => {
           .findById(articleId)
           .withGraphFetched('[author, comments.author]');
 
-        return reply.render('articles/Show', {
+        return reply.code(422).render('articles/Show', {
           article,
           newComment: { ...request.body, errors: request.errors },
         });
@@ -51,7 +51,7 @@ export default async app => {
       const articleId = request.params.id;
       const { commentId } = request.params;
       if (request.errors) {
-        return reply.render('comments/Edit', {
+        return reply.code(422).render('comments/Edit', {
           comment: {
             ...request.body,
             errors: request.errors,

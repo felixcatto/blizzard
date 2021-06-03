@@ -1,6 +1,13 @@
 import { isEmpty, difference } from 'lodash';
 import comments from './comments';
-import { emptyObject, validate, checkSignedIn, checkBelongsToUser, isSignedIn } from '../lib/utils';
+import {
+  emptyObject,
+  validate,
+  checkSignedIn,
+  checkBelongsToUser,
+  isSignedIn,
+  cacheControlStates,
+} from '../lib/utils';
 
 export default async app => {
   const { urlFor } = app.ctx;
@@ -21,7 +28,11 @@ export default async app => {
     { name: 'newArticle', preHandler: checkSignedIn },
     async (request, reply) => {
       const tags = await Tag.query();
-      reply.render('articles/New', { article: emptyObject, tags });
+      reply.render('articles/New', {
+        article: emptyObject,
+        tags,
+        turboCacheControl: cacheControlStates.noPreview,
+      });
     }
   );
 
@@ -48,7 +59,7 @@ export default async app => {
     async (request, reply) => {
       if (request.errors) {
         const tags = await Tag.query();
-        return reply.render('articles/New', {
+        return reply.code(422).render('articles/New', {
           article: request.entityWithErrors,
           tags,
         });
@@ -73,7 +84,7 @@ export default async app => {
     async (request, reply) => {
       if (request.errors) {
         const tags = await Tag.query();
-        return reply.render('articles/Edit', {
+        return reply.code(422).render('articles/Edit', {
           article: request.entityWithErrors,
           tags,
         });

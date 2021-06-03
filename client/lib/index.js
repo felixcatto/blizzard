@@ -1,2 +1,2 @@
 import '../css/index.scss';
-console.log(322);
+import * as Turbo from '@hotwired/turbo';

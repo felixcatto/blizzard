@@ -1,4 +1,4 @@
-import { emptyObject, validate, checkSignedIn } from '../lib/utils';
+import { emptyObject, validate, checkSignedIn, cacheControlStates } from '../lib/utils';
 
 export default async app => {
   const { urlFor } = app.ctx;
@@ -10,7 +10,7 @@ export default async app => {
   });
 
   app.get('/tags/new', { name: 'newTag', preHandler: checkSignedIn }, async (request, reply) => {
-    reply.render('tags/New', { tag: emptyObject });
+    reply.render('tags/New', { tag: emptyObject, turboCacheControl: cacheControlStates.noPreview });
   });
 
   app.get(
@@ -27,7 +27,7 @@ export default async app => {
     { preHandler: [checkSignedIn, validate(Tag.yupSchema)] },
     async (request, reply) => {
       if (request.errors) {
-        return reply.render('tags/New', {
+        return reply.code(422).render('tags/New', {
           tag: request.entityWithErrors,
         });
       }
@@ -42,7 +42,7 @@ export default async app => {
     { name: 'tag', preHandler: [checkSignedIn, validate(Tag.yupSchema)] },
     async (request, reply) => {
       if (request.errors) {
-        return reply.render('tags/Edit', {
+        return reply.code(422).render('tags/Edit', {
           tag: request.entityWithErrors,
         });
       }
