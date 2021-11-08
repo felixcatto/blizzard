@@ -21,7 +21,8 @@ MVC app using  react + fastify + objection orm. Traditional blog with ability to
 *Development*
 ```
 make database-build # only first time
-make database-up 
+make database-up
+make migrate # for prepopulate database, only first time
 make database-seed # for prepopulate database, only first time
 make start
 ```
